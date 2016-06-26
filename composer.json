@@ -1,0 +1,10 @@
+{
+    "name": "loftschool/laravelshop",
+    "authors": [
+        {
+            "name": "team-anton",
+            "email": "ouraddress@mail.ru"
+        }
+    ],
+    "require": {}
+}
