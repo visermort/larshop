@@ -12,9 +12,21 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+      return view('welcome');
 });
 
 Route::auth();
 
 Route::get('/home', 'HomeController@index');
+
+Route::get('/closes', 'ControllerCloses@index');
+
+
+Route::group(['middleware' => ['auth','admin']], function () {
+
+    Route::get('/closes/edit','ControllerCloses@edit');
+    Route::get('/closes/sample','ControllerCloses@sample');
+
+
+});
+

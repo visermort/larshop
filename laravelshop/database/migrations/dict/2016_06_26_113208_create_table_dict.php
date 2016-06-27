@@ -13,12 +13,13 @@ class CreateTableDict extends Migration
     public function up()
     {
         Schema::create('dict', function (Blueprint $table) {
-            $table->string('table',20);
-            $table->string('field',20);
-            $table->integer('id')->unsigned();
+            $table->increments('id');
+            $table->string('table_name',32);
+            $table->string('field_name',32);
             $table->string('value');
             $table->timestamps();
-            $table->primary('table','field','id');
+            $table->unique(['id','table_name','field_name']);
+            $table->unique(['table_name','field_name','value']);
         });
     }
 
