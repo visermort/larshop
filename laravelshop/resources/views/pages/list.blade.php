@@ -4,7 +4,16 @@
     <div class="container">
         <div class="row">
 
-            {{ $count }}
+            {{ dd($viewData) }}
+            {{--{{ dd($structure) }}--}}
+           {{--@foreach ($viewData as $item)--}}
+            {{--<p>--}}
+             {{--{{ $item['name'] }}--}}
+            {{--</p>--}}
+            {{--<p>--}}
+                {{--{{ $item['description'] }}--}}
+            {{--</p>--}}
+           {{--@endforeach--}}
 
         </div>
     </div>

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Models\Closes;
@@ -11,7 +10,6 @@ use Faker\Factory as Faker;
 
 class ControllerCloses extends Controller
 {
-    private $filterData;//сруктура для фильтра
 
     //отображeние списком
     public function index()
@@ -20,15 +18,19 @@ class ControllerCloses extends Controller
         $onPage = config('shop.itemsOnPage');
         $closesData = Closes::paginate($onPage);
         //обрабатываем словари и изображения
-
+        $viewData=[];
+        foreach ($closesData as $item){
+            $viewData[] = $this->copyData($item);
+        }
 
         //наполняем массив
         $data= array(
             'title' => 'Магазин - Одежда',
             'pageTitle' => 'Одежда',
-            'closes' => $closesData,
+            'viewData' => $viewData,
+            'modelData' => $closesData,
             'count' => Closes::count(),
-            'filter' => $this->filterData
+            'structure' => $this->structure
         );
         return view('pages.list',$data);
 
@@ -76,9 +78,22 @@ class ControllerCloses extends Controller
             Log::error('Ошибка записи '.$e->getMessage());
             return redirect('/home');
         }
+    }
 
-
-
+    public function __construct()
+    {
+        //описываем дополнительные поля для модели, которых нет в базовом контроллере
+        $this->structure['size'] = ['title' => 'Размер','type' => 'select'];
+        $this->structure['season'] = ['title' => 'Сезон','type' => 'select'];
+        $this->structure['sex'] = ['title' => 'Пол','type' => 'select'];
+        $this->structure['category'] = ['title' => 'Категория','type' => 'select'];
+        //для полей select наполняем возможные значения словаря
+        $this->structure['manufacturer']['options'] = $this->getDictList('closes','manufacturer');
+        $this->structure['size']['options'] = $this->getDictList('closes','size');
+        $this->structure['season']['options'] = $this->getDictList('closes','season');
+        $this->structure['sex']['options'] = $this->getDictList('closes','sex');
+        $this->structure['category']['options'] = $this->getDictList('closes','category');
+        $this->structure['country']['options'] = $this->getDictList('closes','country');
     }
 
 }
