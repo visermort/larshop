@@ -19,14 +19,41 @@ Route::auth();
 
 Route::get('/home', 'HomeController@index');
 
-Route::get('/closes', 'ControllerCloses@index');
+//Route::get('/closes', 'ControllerCloses@index');
+Route::get('/{model}', function($model) {
+    $className='App\Http\Controllers\Controller'.ucfirst($model);
+    $controller = new $className;
+    return $controller->index();
+});
+
+Route::get('/{model}/{action}', function($model,$action = 'index') {
+    $model = ucfirst($model);
+    $action =strtolower($action);
+    echo $action;
+    if (!in_array($action,['edit','sample'])) {
+        $className = 'App\Http\Controllers\Controller' . $model;
+        $controller = new $className;
+        return $controller->$action();
+    }
+});
+
 
 
 Route::group(['middleware' => ['auth','admin']], function () {
 
-    Route::get('/closes/edit','ControllerCloses@edit');
-    Route::get('/closes/sample','ControllerCloses@sample');
+    Route::get('/{model}/{action}', function($model,$action = 'index') {
+        $model = ucfirst($model);
+        $action =strtolower($action);
+        echo $action;
+        if (in_array($action,['edit','sample'])) {
+            $className = 'App\Http\Controllers\Controller' . $model;
+            $controller = new $className;
+            return $controller->$action();
+        }
+    });
 
+  //  Route::get('/closes/edit','ControllerCloses@edit');
+  //  Route::get('/closes/sample','ControllerCloses@sample');
 
 });
 

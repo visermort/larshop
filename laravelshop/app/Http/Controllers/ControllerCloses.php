@@ -41,7 +41,7 @@ class ControllerCloses extends Controller
     //сохранение результатов редактирования/добавления
     public function save()
     {
-
+            echo 'save';
     }
     //наполнение тестовыми данными
     public function sample()
@@ -55,14 +55,14 @@ class ControllerCloses extends Controller
         $country = ['Россия','Китай','Германия','Франция'];
 
         try {
-            foreach (range(1, 9) as $index){
+            foreach (range(1, 4) as $index){
                 $closes = new Closes();
                 $closes->name = $faker->word;
                 $closes->manufacturer = $this->writeDict('closes','manufacturer',$manufacturers[mt_rand(0,count($manufacturers)-1)]);
                 $closes->description = $faker->text;
                 $closes->price = $faker->randomFloat;
                 $closes->count = $faker->randomDigit;
-                $closes->image = $this->writeImagesFromFile(config('shop.images').'/'.$faker->image('../'.config('shop.images'),800,600,'fashion') );
+                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'fashion') );
                 $closes->size = $this->writeDict('closes','size',$sizes[mt_rand(0,count($sizes)-1)]);
                 $closes->season = $this->writeDict('closes','seasons',$seasons[mt_rand(0,count($seasons)-1)]);
                 $closes->sex = $this->writeDict('closes','sex',$sexs[mt_rand(0,count($sexs)-1)]);
