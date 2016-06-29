@@ -30,15 +30,31 @@ class ControllerCloses extends Controller
             'viewData' => $viewData,
             'modelData' => $closesData,
             'count' => Closes::count(),
-            'structure' => $this->structure
+            'structure' => $this->structure,
+            'table' => 'closes'
         );
         return view('pages.list',$data);
 
     }
     //отображение формы редактирования
-    public function edit()
+    public function edit($id)
     {
-        echo 'Edit';
+        // $closes = new Closes;
+        $closesData = Closes::find($id);
+        //обрабатываем словари и изображения
+
+        $viewData = $this->copyData($closesData);
+
+        //наполняем массив
+        $data= array(
+            'title' => 'Магазин - Одежда',
+            'pageTitle' => 'Одежда - Редактор',
+            'viewData' => $viewData,
+            'modelData' => $closesData,
+            'structure' => $this->structure,
+            'table' => 'closes'
+        );
+        return view('pages.edit',$data);
     }
     //сохранение результатов редактирования/добавления
     public function save()

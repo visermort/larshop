@@ -29,7 +29,6 @@ Route::get('/{model}', function($model) {
 Route::get('/{model}/{action}', function($model,$action = 'index') {
     $model = ucfirst($model);
     $action =strtolower($action);
-    echo $action;
     if (!in_array($action,['edit','sample'])) {
         $className = 'App\Http\Controllers\Controller' . $model;
         $controller = new $className;
@@ -44,13 +43,23 @@ Route::group(['middleware' => ['auth','admin']], function () {
     Route::get('/{model}/{action}', function($model,$action = 'index') {
         $model = ucfirst($model);
         $action =strtolower($action);
-        echo $action;
         if (in_array($action,['edit','sample'])) {
             $className = 'App\Http\Controllers\Controller' . $model;
             $controller = new $className;
             return $controller->$action();
         }
     });
+
+    Route::get('/{model}/{action}/{id}', function($model,$action = 'index',$id=0) {
+        $model = ucfirst($model);
+        $action =strtolower($action);
+        if (in_array($action,['edit','sample'])) {
+            $className = 'App\Http\Controllers\Controller' . $model;
+            $controller = new $className;
+            return $controller->$action($id);
+        }
+    });
+
 
   //  Route::get('/closes/edit','ControllerCloses@edit');
   //  Route::get('/closes/sample','ControllerCloses@sample');

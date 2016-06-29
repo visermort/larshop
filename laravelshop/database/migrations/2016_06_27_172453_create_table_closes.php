@@ -19,12 +19,16 @@ class CreateTableCloses extends Migration
             $table->text('description')->nullable();
             $table->float('price')->nullable();
             $table->integer('count')->default('0');
-            $table->integer('image')->nullable();
+            $table->integer('image')->nullable()->unsigned();
             $table->integer('size')->nullable();
             $table->integer('season')->nullable();
             $table->integer('sex')->nullable();
             $table->integer('category')->nullable();
             $table->integer('country')->nullable();
+            $table->foreign('image')->references('id')
+                ->on('images')
+                ->onDelete('cascade');
+
             $table->timestamps();
         });
     }
