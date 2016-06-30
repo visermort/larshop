@@ -44,7 +44,7 @@ Route::group(['middleware' => ['auth','admin']], function () {
     Route::get('/{model}/{action}', function($model,$action = 'index') {
         $model = ucfirst($model);
         $action =strtolower($action);
-        if (in_array($action,['sample'])) {
+        if (in_array($action,['sample','add'])) {
             $className = 'App\Http\Controllers\Controller' . $model;
             $controller = new $className;
             return $controller->$action();

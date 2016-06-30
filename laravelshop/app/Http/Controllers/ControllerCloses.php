@@ -39,7 +39,6 @@ class ControllerCloses extends Controller
     //отображение формы редактирования
     public function edit($id)
     {
-        // $closes = new Closes;
         $closesData = Closes::find($id);
         //обрабатываем словари и изображения
 
@@ -54,6 +53,26 @@ class ControllerCloses extends Controller
             'structure' => $this->structure,
             'table' => 'closes',
             'id' => $id
+        );
+        return view('pages.edit',$data);
+    }
+    public function add()
+    {
+        //новая запись
+        //делаем пустой массив с данными
+        $viewData = [];
+        foreach ($this->structure as $key => $item){
+            $viewData[$key] = '';
+        }
+        //наполняем массив
+        $data= array(
+            'title' => 'Магазин - Одежда',
+            'pageTitle' => 'Одежда - Редактор. Новая запись',
+            'viewData' => $viewData,//пустой массив
+            'modelData' => [],//пустой массив
+            'structure' => $this->structure,
+            'table' => 'closes',
+            'id' => ''
         );
         return view('pages.edit',$data);
     }
