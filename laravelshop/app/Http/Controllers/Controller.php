@@ -24,7 +24,7 @@ class Controller extends BaseController
         'name' => ['title' => 'Наименование','type' => 'text'],
         'manufacturer' => ['title' => 'Производитель','type' => 'select'],
         'description' => ['title' => 'Описание','type' => 'textarea'],
-        'price' => ['title' => 'Цена','type' => 'text'],
+        'price' => ['title' => 'Цена, руб.','type' => 'text'],
         'count' => ['title' => 'Количество','type' => 'text'],
         'image' => ['title' => 'Изображение','type' => 'image'],
         'country' => ['title' => 'Страна','type' => 'select']
@@ -51,48 +51,55 @@ class Controller extends BaseController
     }
 
 
-    //images
+    //Картинки
+    //обработка файла из $_files
     protected function writeImages( $file)
     {
-        $image = new Images;
-//        $image->original = $file
+        if ($file->isValid()) {
+           // $file->getRealPath();
+            $newFileName = $file->getClientOriginalName();
+            $file->move(config('shop.images'), $newFileName);
 
-
-
-        $idImage=0;
-
-        return $idImage;
+            return $this->writeImagesFromFile($newFileName);
+        } else {
+            return null;
+        }
     }
     //обработка файла, когда он уже в папке
     protected function writeImagesFromFile($file)
     {
-        $path_info = pathinfo($file);
-        $fileExt = $path_info['extension'];
-        $fileName = $path_info['basename'];
-        $fileShort = substr($fileName, 0, strlen($fileName) - strlen($fileExt) - 1);
+        try {
+            $path_info = pathinfo($file);
+            $fileExt = $path_info['extension'];
+            $fileName = $path_info['basename'];
+            $fileShort = substr($fileName, 0, strlen($fileName) - strlen($fileExt) - 1);
 
 
-        //новая модель
-        $images = new Images;
-        //оригинал
-        $images->original = $fileName;
-        //открываем файл в Intervention , ресайзим, пишем имя
+            //новая модель
+            $images = new Images;
+            //оригинал
+            $images->original = $fileName;
+            //открываем файл в Intervention , ресайзим, пишем имя
 
-        $fullPath = public_path(config('shop.images') . '/' . $fileName);
-        $imgTemp = Image::make($fullPath);
-        $imgTemp->fit(300, 300);
-        $middleName = $fileShort . '_mid';
-        $imgTemp->save(public_path(config('shop.images') . '/' . $middleName . '.' . $fileExt));
-        $images->middle = $middleName . '.' . $fileExt;
-        //ещё ресайзим и ещё пишем
-        $thumbName = $fileShort . '_thumb';
-        $imgTemp->fit(100, 100);
-        $imgTemp->save(public_path(config('shop.images') . '/' . $thumbName . '.' . $fileExt));
-        $images->thumb = $thumbName . '.' . $fileExt;
-        //сохраняем модель
-        $images->save();
-        //возвращаем id
-        return $images->id;
+            $fullPath = public_path(config('shop.images') . '/' . $fileName);
+            $imgTemp = Image::make($fullPath);
+            $imgTemp->fit(300, 300);
+            $middleName = $fileShort . '_mid';
+            $imgTemp->save(public_path(config('shop.images') . '/' . $middleName . '.' . $fileExt));
+            $images->middle = $middleName . '.' . $fileExt;
+            //ещё ресайзим и ещё пишем
+            $thumbName = $fileShort . '_thumb';
+            $imgTemp->fit(100, 100);
+            $imgTemp->save(public_path(config('shop.images') . '/' . $thumbName . '.' . $fileExt));
+            $images->thumb = $thumbName . '.' . $fileExt;
+            //сохраняем модель
+            $images->save();
+            //возвращаем id
+            return $images->id;
+        } catch (Exception $e) {
+            Log::error('Ошибка обработки изображения '.$e->getMessage());
+            return null;
+        }
 
     }
     protected function getFullImage($id)
@@ -122,7 +129,7 @@ class Controller extends BaseController
             return 0;
         }
     }
-    //dictionary
+    //Словари
     //проверка, есть ли значение, если нет, то вставка
     protected function writeDict($table,$field,$value)
     {
@@ -178,7 +185,7 @@ class Controller extends BaseController
         if (count($dict)){
             $list=[];
             foreach($dict as $item){
-                $list[]=$item->value;
+                $list[$item->id]=$item->value;
             }
             return $list;
         } else {
