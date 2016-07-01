@@ -46,16 +46,21 @@ Route::get('/{model}', function($model) {
     }
 });
 
-
-Route::get('/{model}/{action}', function($model,$action = 'index') {
-    $model = ucfirst($model);
-    $action =strtolower($action);
-    if (!in_array($action,['edit','sample','save']) && !in_array($model,['manager'])) {
-        $className = 'App\Http\Controllers\Controller' . $model;
+Route::get('/{model}/filter', function($model,Request $request) {
+        $className = 'App\Http\Controllers\Controller' . ucfirst($model);
         $controller = new $className;
-        return $controller->$action();
-    }
+        return $controller->filter($request);
 });
+
+//Route::get('/{model}/{action}', function($model,$action = 'index',Request $request) {
+//    $model = ucfirst($model);
+//    $action =strtolower($action);
+//    if (!in_array($action,['edit','sample','save']) && !in_array($model,['manager'])) {
+//        $className = 'App\Http\Controllers\Controller' . $model;
+//        $controller = new $className;
+//        return $controller->$action($request);
+//    }
+//});
 
 
 

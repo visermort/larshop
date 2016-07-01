@@ -8,6 +8,7 @@ use App\Models\Closes;
 use Faker\Factory as Faker;
 
 
+
 class ControllerCloses extends Controller
 {
 
@@ -19,6 +20,7 @@ class ControllerCloses extends Controller
         $closesData = Closes::paginate($onPage);
         //обрабатываем словари и изображения
         $viewData=[];
+//        dd($closesData);
         foreach ($closesData as $item){
             $viewData[] = $this->copyData($item);
         }
@@ -36,6 +38,96 @@ class ControllerCloses extends Controller
         return view('pages.list',$data);
 
     }
+    public function filter($request)
+    {
+        $this->validate($request, [
+            'manufacturer' => 'integer',
+            'price_from' => 'numeric|min:0',
+            'price_to' => 'numeric|min:0',
+            'count' => 'integer|min:0',
+            'country' => 'integer',
+            'size' => 'integer',
+            'season' => 'integer',
+            'sex' => 'integer',
+            'category' => 'integer',
+        ]);
+        $onPage = config('shop.itemsOnPage');
+        $sql='1=1 ';
+        $sqlArr=[];
+        $filterArr=[];
+        if ($request->input('name')) {
+            $sql .=' and name like ?';
+            $sqlArr []= '%'.$request->input('name').'%';
+            $filterArr ['name'] = $request->input('name');
+        }
+        if ($request->input('manufacturer')) {
+            $sql .=' and manufacturer = ?';
+            $sqlArr []= $request->input('manufacturer');
+            $filterArr ['manufacturer'] = $request->input('manufacturer');
+        }
+        if ($request->input('price_from')) {
+            $sql .=' and price >= ?';
+            $sqlArr []= $request->input('price_from');
+            $filterArr ['price_from']= $request->input('price_from');
+        }
+        if ($request->input('price_to')) {
+            $sql .=' and price <= ?';
+            $sqlArr []= $request->input('price_to');
+            $filterArr ['price_to']= $request->input('price_to');
+        }
+        if ($request->input('count')) {
+            $sql .=' and count = ?';
+            $sqlArr []= $request->input('count');
+            $filterArr ['count']= $request->input('count');
+        }
+        if ($request->input('country')) {
+            $sql .=' and country = ?';
+            $sqlArr []= $request->input('country');
+            $filterArr ['country']= $request->input('country');
+        }
+        if ($request->input('size')) {
+            $sql .=' and size = ?';
+            $sqlArr []= $request->input('size');
+            $filterArr ['size']= $request->input('size');
+        }
+        if ($request->input('season')) {
+            $sql .=' and season = ?';
+            $sqlArr []= $request->input('season');
+            $filterArr ['season']= $request->input('season');
+        }
+        if ($request->input('sex')) {
+            $sql .=' and sex = ?';
+            $sqlArr []= $request->input('sex');
+            $filterArr ['sex']= $request->input('sex');
+        }
+        if ($request->input('category')) {
+            $sql .=' and category = ?';
+            $sqlArr []= $request->input('category');
+            $filterArr ['category']= $request->input('category');
+        }
+
+        $closesData = Closes::whereRaw($sql, $sqlArr)
+           ->paginate($onPage);
+        //обрабатываем словари и изображения
+        $viewData=[];
+
+        foreach ($closesData as $item){
+            $viewData[] = $this->copyData($item);
+        }
+        //наполняем массив
+        $data= array(
+            'title' => 'Магазин - Одежда',
+            'pageTitle' => 'Одежда - фильтр',
+            'viewData' => $viewData,
+            'modelData' => $closesData,
+            'count' => Closes::count(),
+            'structure' => $this->structure,
+            'table' => 'closes',
+            'filterData' => $filterArr //параметры фильтра, чтобы вернуть в форму
+        );
+        return view('pages.list',$data);
+    }
+
     //отображение формы редактирования
     public function edit($id)
     {

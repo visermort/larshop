@@ -74,3 +74,17 @@ html, body {
     padding: 5px;
     box-sizing: border-box;
 }
+.filter__label {
+    width: 100%;
+    text-align: center;
+}
+.filter__input {
+    width: 100%;
+}
+.filter {
+    padding: 10px;
+}
+.filter__formgoup {
+    margin: 10px auto;
+    text-align: center;
+}
