@@ -24,6 +24,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $data= array(
+            'title' => 'Магазин - Одежда',
+            'pageTitle' => 'Одежда',
+        );
+        return view('home',$data);
     }
 }

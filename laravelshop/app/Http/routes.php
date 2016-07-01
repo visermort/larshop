@@ -12,25 +12,45 @@
 */
 use Illuminate\Http\Request;
 
-Route::get('/', function () {
-      return view('welcome');
-});
+//Route::get('/', function () {
+//      echo 'работает';
+//});
+//Route::get('/', function () {
+//      return view('welcome');
+//});
 
 Route::auth();
 
 Route::get('/home', 'HomeController@index');
+Route::get('/', 'HomeController@index');
+
+
+Route::group(['middleware' => ['auth','admin']], function () {
+
+    Route::get('/manager/','ControllerManager@index');
+    Route::get('/manager/site','ControllerManager@site');
+    Route::get('/manager/model/{action}',function($action){
+        $controllerName='App\Http\Controllers\ControllerManager';
+        $controller = new $controllerName;
+        return $controller->model($action);
+    });
+
+});
 
 //Route::get('/closes', 'ControllerCloses@index');
 Route::get('/{model}', function($model) {
-    $className='App\Http\Controllers\Controller'.ucfirst($model);
-    $controller = new $className;
-    return $controller->index();
+    if (!in_array($model, ['manager'])){
+        $className = 'App\Http\Controllers\Controller' . ucfirst($model);
+        $controller = new $className;
+        return $controller->index();
+    }
 });
+
 
 Route::get('/{model}/{action}', function($model,$action = 'index') {
     $model = ucfirst($model);
     $action =strtolower($action);
-    if (!in_array($action,['edit','sample','save'])) {
+    if (!in_array($action,['edit','sample','save']) && !in_array($model,['manager'])) {
         $className = 'App\Http\Controllers\Controller' . $model;
         $controller = new $className;
         return $controller->$action();
@@ -39,7 +59,10 @@ Route::get('/{model}/{action}', function($model,$action = 'index') {
 
 
 
+
 Route::group(['middleware' => ['auth','admin']], function () {
+
+
 
     Route::get('/{model}/{action}', function($model,$action = 'index') {
         $model = ucfirst($model);
@@ -70,9 +93,7 @@ Route::group(['middleware' => ['auth','admin']], function () {
         }
     });
 
-
-  //  Route::get('/closes/edit','ControllerCloses@edit');
-  //  Route::get('/closes/sample','ControllerCloses@sample');
-
 });
+
+
 
