@@ -25,6 +25,11 @@ Route::auth();
 
 Route::get('/', 'HomeController@index');
 
+Route::post('/mail',function(Request $request){
+    $className = 'App\Http\Controllers\HomeController';
+    $controller = new $className;
+    return $controller->sendMail($request);
+});
 
 Route::group(['middleware' => ['auth','admin']], function () {
 

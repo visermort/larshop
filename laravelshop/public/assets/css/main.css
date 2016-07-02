@@ -21,6 +21,7 @@ html, body {
     padding: 15px 0;
 }
 
+/*форма редактор*/
 .form-edit__input {
     width: 100%;
 }
@@ -87,4 +88,30 @@ html, body {
 .filter__formgoup {
     margin: 10px auto;
     text-align: center;
+}
+
+/*модальное окно*/
+.modal__text,
+.modal__formgroup,
+.mmodal__label,
+.modal__input,
+.modal__message{
+    width: 100%;
+    text-align: center;
+}
+.modal__message_success {
+    color: green;
+}
+.modal__message_error {
+    color: red;
+}
+
+.modal__button {
+    margin: 10px auto;
+}
+.modal__formgroup {
+    margin-bottom: 10px;
+}
+.modal__input.error {
+    background-color: #ebcccc;
 }

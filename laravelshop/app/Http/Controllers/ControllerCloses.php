@@ -157,6 +157,7 @@ class ControllerCloses extends Controller
             'modelData' => $closesData,
             'structure' => $this->structure,
             'table' => 'closes',
+            'productTitle' => 'Одежда',
             'id' => $id
         );
         return view('pages.product',$data);
