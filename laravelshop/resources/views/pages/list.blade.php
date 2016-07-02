@@ -87,7 +87,16 @@
                    <div class="col-sm-4 product__cell">{{ $item['description'] }}</div>
                    <div class="col-sm-1 product__cell">{{ $item['price'] }}</div>
                    <div class="col-sm-1 product__cell">{{ $item['count'] }}</div>
-                   <div class="col-sm-1 product__cell">Ссылки</div>
+                   <div class="col-sm-1 product__cell">
+                       {{--Ссылки--}}
+                       <a href="/{{ $table }}/{{ $item['id'] }}">Подробно</a>
+                       {{--если админ --}}
+                       @if ($admin)
+                           <a href="/{{ $table }}/edit/{{ $item['id'] }}">Редактор</a>
+                           <a href="/{{ $table }}/delete/{{ $item['id'] }}">Удалить</a>
+                       @endif
+
+                   </div>
 
 
                </div>

@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Models\Closes;
 use Faker\Factory as Faker;
-
+use Illuminate\Support\Facades\Auth;
 
 
 class ControllerCloses extends Controller
@@ -24,7 +24,6 @@ class ControllerCloses extends Controller
         foreach ($closesData as $item){
             $viewData[] = $this->copyData($item);
         }
-
         //наполняем массив
         $data= array(
             'title' => 'Магазин - Одежда',
@@ -33,11 +32,13 @@ class ControllerCloses extends Controller
             'modelData' => $closesData,
             'count' => Closes::count(),
             'structure' => $this->structure,
-            'table' => 'closes'
+            'table' => 'closes',
+            'admin' => (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail'))//являетcя ли пользователь админом
         );
         return view('pages.list',$data);
 
     }
+    //    фильтрация
     public function filter($request)
     {
         $this->validate($request, [
@@ -123,9 +124,28 @@ class ControllerCloses extends Controller
             'count' => Closes::count(),
             'structure' => $this->structure,
             'table' => 'closes',
-            'filterData' => $filterArr //параметры фильтра, чтобы вернуть в форму
+            'filterData' => $filterArr, //параметры фильтра, чтобы вернуть в форму
+            'admin' => (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail'))//являетcя ли пользователь админом
         );
         return view('pages.list',$data);
+    }
+    //отображение одиночной записи
+    public function single($id)
+    {
+        $closesData = Closes::find($id);
+
+        $viewData = $this->copyData($closesData);
+
+        $data= array(
+            'title' => 'Магазин - Одежда',
+            'pageTitle' => 'Одежда - Карточка товара',
+            'viewData' => $viewData,
+            'modelData' => $closesData,
+            'structure' => $this->structure,
+            'table' => 'closes',
+            'id' => $id
+        );
+        return view('pages.product',$data);
     }
 
     //отображение формы редактирования
@@ -148,6 +168,7 @@ class ControllerCloses extends Controller
         );
         return view('pages.edit',$data);
     }
+    //добавление записи
     public function add()
     {
         //новая запись
@@ -261,15 +282,15 @@ class ControllerCloses extends Controller
 
     public function __construct()
     {
+        //для полей select наполняем возможные значения словаря - обязательные - для всех моделей
+        $this->structure['manufacturer']['options'] = $this->getDictList('closes','manufacturer');
+        $this->structure['country']['options'] = $this->getDictList('closes','country');
         //описываем дополнительные поля для модели, которых нет в базовом контроллере
         $this->structure['size'] = ['title' => 'Размер','type' => 'select'];
         $this->structure['season'] = ['title' => 'Сезон','type' => 'select'];
         $this->structure['sex'] = ['title' => 'Пол','type' => 'select'];
         $this->structure['category'] = ['title' => 'Категория','type' => 'select'];
-        //для полей select наполняем возможные значения словаря - обязательные - для всех моделей
-        $this->structure['manufacturer']['options'] = $this->getDictList('closes','manufacturer');
-        $this->structure['country']['options'] = $this->getDictList('closes','country');
-        //аналогично для уникальных полей
+        //для уникальных полей select заполняем возможные значения
         $this->structure['size']['options'] = $this->getDictList('closes','size');
         $this->structure['season']['options'] = $this->getDictList('closes','season');
         $this->structure['sex']['options'] = $this->getDictList('closes','sex');

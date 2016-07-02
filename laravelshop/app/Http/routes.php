@@ -21,7 +21,8 @@ use Illuminate\Http\Request;
 
 Route::auth();
 
-Route::get('/home', 'HomeController@index');
+//Route::get('/home', 'HomeController@index');
+
 Route::get('/', 'HomeController@index');
 
 
@@ -52,16 +53,11 @@ Route::get('/{model}/filter', function($model,Request $request) {
         return $controller->filter($request);
 });
 
-//Route::get('/{model}/{action}', function($model,$action = 'index',Request $request) {
-//    $model = ucfirst($model);
-//    $action =strtolower($action);
-//    if (!in_array($action,['edit','sample','save']) && !in_array($model,['manager'])) {
-//        $className = 'App\Http\Controllers\Controller' . $model;
-//        $controller = new $className;
-//        return $controller->$action($request);
-//    }
-//});
-
+Route::get('/{model}/{id}', function($model,$id) {
+    $className = 'App\Http\Controllers\Controller' . ucfirst($model);
+    $controller = new $className;
+    return $controller->single($id);
+});
 
 
 
