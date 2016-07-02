@@ -7,7 +7,7 @@ use App\Http\Requests;
 use App\Models\Closes;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\Images;
 
 class ControllerCloses extends Controller
 {
@@ -38,6 +38,20 @@ class ControllerCloses extends Controller
         return view('pages.list',$data);
 
     }
+    //удаление записи
+    public function delete($id)
+    {
+        //eщё раз проверяем авторизацию пользователя
+        if (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail')) {
+            $closes = Closes::find($id);
+            if (isset($closes['attributes']['image']) && $closes['attributes']['image']) {
+                Images::find($closes['attributes']['image'])->delete();
+            }
+            $closes -> delete();
+            return back();
+        }
+    }
+
     //    фильтрация
     public function filter($request)
     {
