@@ -42,11 +42,13 @@
                             <label class="filter__label" for="filter_item_{{$key}}">{{ $item['title'] }}</label>
                             <select class="filter__input" id="filter_item_{{ $key }}" name="{{ $key }}">
                                 <option value="" >-- Не выбрано --</option>
-                                @foreach ($item['options'] as $index => $value)
-                                    <option value="{{ $index }}" @if (isset($filterData[$key]) && $filterData[$key] == $index) selected @endif >
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
+                                @if (isset($item['options']))
+                                    @foreach ($item['options'] as $index => $value)
+                                        <option value="{{ $index }}" @if (isset($filterData[$key]) && $filterData[$key] == $index) selected @endif >
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                @endif
                             </select>
                         @endif
                     </div>

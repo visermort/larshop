@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests;
-use App\Models\Closes;
+use App\Models\Drinks;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Images;
 
-class ControllerCloses extends Controller
+
+
+class ControllerDrinks extends Controller
 {
 
     //отображeние списком
     public function index()
     {
-       // $closes = new Closes;
+        // $closes = new Closes;
         $onPage = config('shop.itemsOnPage');
-        $closesData = Closes::paginate($onPage);
+        $closesData = Drinks::paginate($onPage);
         //обрабатываем словари и изображения
         $viewData=[];
 //        dd($closesData);
@@ -26,13 +27,13 @@ class ControllerCloses extends Controller
         }
         //наполняем массив
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда',
+            'title' => 'Магазин - Напитки',
+            'pageTitle' => 'Напитки',
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Closes::count(),
+            'count' => Drinks::count(),
             'structure' => $this->structure,
-            'table' => 'closes',
+            'table' => 'drinks',
             'admin' => (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail'))//являетcя ли пользователь админом
         );
         return view('pages.list',$data);
@@ -43,7 +44,7 @@ class ControllerCloses extends Controller
     {
         //eщё раз проверяем авторизацию пользователя
         if (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail')) {
-            $closes = Closes::find($id);
+            $closes = Drinks::find($id);
             if (isset($closes['attributes']['image']) && $closes['attributes']['image']) {
                 Images::find($closes['attributes']['image'])->delete();
             }
@@ -61,9 +62,9 @@ class ControllerCloses extends Controller
             'price_to' => 'numeric|min:0',
             'count' => 'integer|min:0',
             'country' => 'integer',
-            'size' => 'integer',
-            'season' => 'integer',
-            'sex' => 'integer',
+            'volume' => 'integer',
+            'alcoghol' => 'string',
+            'stage' => 'integer',
             'category' => 'integer',
         ]);
         $onPage = config('shop.itemsOnPage');
@@ -100,20 +101,20 @@ class ControllerCloses extends Controller
             $sqlArr []= $request->input('country');
             $filterArr ['country']= $request->input('country');
         }
-        if ($request->input('size')) {
-            $sql .=' and size = ?';
-            $sqlArr []= $request->input('size');
-            $filterArr ['size']= $request->input('size');
+        if ($request->input('volume')) {
+            $sql .=' and volume = ?';
+            $sqlArr []= $request->input('volume');
+            $filterArr ['size']= $request->input('volume');
         }
-        if ($request->input('season')) {
-            $sql .=' and season = ?';
-            $sqlArr []= $request->input('season');
-            $filterArr ['season']= $request->input('season');
+        if ($request->input('alcoghol')) {
+            $sql .=' and alcoghol = ?';
+            $sqlArr []= $request->input('alcoghol');
+            $filterArr ['season']= $request->input('alcoghol');
         }
-        if ($request->input('sex')) {
-            $sql .=' and sex = ?';
-            $sqlArr []= $request->input('sex');
-            $filterArr ['sex']= $request->input('sex');
+        if ($request->input('stage')) {
+            $sql .=' and stage = ?';
+            $sqlArr []= $request->input('stage');
+            $filterArr ['sex']= $request->input('stage');
         }
         if ($request->input('category')) {
             $sql .=' and category = ?';
@@ -121,8 +122,8 @@ class ControllerCloses extends Controller
             $filterArr ['category']= $request->input('category');
         }
 
-        $closesData = Closes::whereRaw($sql, $sqlArr)
-           ->paginate($onPage);
+        $closesData = Drinks::whereRaw($sql, $sqlArr)
+            ->paginate($onPage);
         //обрабатываем словари и изображения
         $viewData=[];
 
@@ -131,13 +132,13 @@ class ControllerCloses extends Controller
         }
         //наполняем массив
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда - фильтр',
+            'title' => 'Магазин - Напитки',
+            'pageTitle' => 'Напитки - фильтр',
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Closes::count(),
+            'count' => Drinks::count(),
             'structure' => $this->structure,
-            'table' => 'closes',
+            'table' => 'drinks',
             'filterData' => $filterArr, //параметры фильтра, чтобы вернуть в форму
             'admin' => (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail'))//являетcя ли пользователь админом
         );
@@ -146,18 +147,18 @@ class ControllerCloses extends Controller
     //отображение одиночной записи
     public function single($id)
     {
-        $closesData = Closes::find($id);
+        $closesData = Drinks::find($id);
 
         $viewData = $this->copyData($closesData);
 
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда - Карточка товара',
+            'title' => 'Магазин - Напитки',
+            'pageTitle' => 'Напитки - Карточка товара',
             'viewData' => $viewData,
             'modelData' => $closesData,
             'structure' => $this->structure,
-            'table' => 'closes',
-            'productTitle' => 'Одежда',
+            'table' => 'drinks',
+            'productTitle' => 'Напитки',
             'id' => $id
         );
         return view('pages.product',$data);
@@ -166,19 +167,19 @@ class ControllerCloses extends Controller
     //отображение формы редактирования
     public function edit($id)
     {
-        $closesData = Closes::find($id);
+        $closesData = Drinks::find($id);
         //обрабатываем словари и изображения
 
         $viewData = $this->copyData($closesData);
 
         //наполняем массив
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда - Редактор. Запись '.$id,
+            'title' => 'Магазин - Напитки',
+            'pageTitle' => 'Напитки - Редактор. Запись '.$id,
             'viewData' => $viewData,
             'modelData' => $closesData,
             'structure' => $this->structure,
-            'table' => 'closes',
+            'table' => 'drinks',
             'id' => $id
         );
         return view('pages.edit',$data);
@@ -194,12 +195,12 @@ class ControllerCloses extends Controller
         }
         //наполняем массив
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда - Редактор. Новая запись',
+            'title' => 'Магазин - Напитки',
+            'pageTitle' => 'Напитки - Редактор. Новая запись',
             'viewData' => $viewData,//пустой массив
             'modelData' => [],//пустой массив
             'structure' => $this->structure,
-            'table' => 'closes',
+            'table' => 'drinks',
             'id' => ''
         );
         return view('pages.edit',$data);
@@ -215,9 +216,9 @@ class ControllerCloses extends Controller
             'count' => 'integer|required|min:0',
             'image' => 'image',
             'country' => 'integer',
-            'size' => 'integer',
-            'season' => 'integer',
-            'sex' => 'integer',
+            'volume' => 'integer',
+            'alcoghol' => 'string',
+            'stage' => 'integer',
             'category' => 'integer',
         ]);
 //        echo 'save'.$request->input('id');
@@ -232,11 +233,11 @@ class ControllerCloses extends Controller
             }
             if ($request->id) {
                 //если имеется id, то обновление записи
-                $closes = Closes::find($request->id);
+                $closes = Drinks::find($request->id);
             }
             if (!$request->id || !isset($closes)|| !$closes)  {
                 //иначе, или не нашли, тогда новая запись
-                $closes = new Closes();
+                $closes = new Drinks();
             }
 
             $closes->name = $request->input('name');
@@ -248,9 +249,9 @@ class ControllerCloses extends Controller
                 $closes->image = $imageId;
             }
             $closes->country = $request->input('country');
-            $closes->size = $request->input('size');
-            $closes->season = $request->input('season');
-            $closes->sex = $request->input('sex');
+            $closes->volume = $request->input('volume');
+            $closes->alcoghol = $request->input('alcoghol');
+            $closes->stage = $request->input('stage');
             $closes->category = $request->input('category');
             // сохранение
             $closes->save();
@@ -265,27 +266,27 @@ class ControllerCloses extends Controller
     public function sample()
     {
         $faker = Faker::create();
-        $manufacturers = ['Berries','Dress','Jerutti'];
-        $sizes = ['xs','s','m','l','xl','xxl'];
-        $season = ['Зима','Лето','Весна-осень'];
-        $sexs = ['М','Ж','Детская'];
-        $category = ['Рубашки','Брюки','Куркти','Пальто','Блузки','Юбки'];
-        $country = ['Россия','Китай','Германия','Франция'];
+        $manufacturers = ['Гленфиддик','Brown-Forman','Латвийский бальзам','Pernod Ricard'];
+        $volume = ['0.3','0,25','0.5','0.75','1'];
+        $stage = ['1','2','3','4','5','10'];
+        $alco = ['0','9','12','13','19','30','40','45'];
+        $category = ['Водки','Коньяки','Сухие','Полусухие','Полусладкие','Шампанское'];
+        $country = ['Россия','Италия','Испания','Франция','Аргентина'];
 
         try {
             foreach (range(1, 20) as $index){
-                $closes = new Closes();
+                $closes = new Drinks();
                 $closes->name = $faker->word;
-                $closes->manufacturer = $this->writeDict('closes','manufacturer',$manufacturers[mt_rand(0,count($manufacturers)-1)]);
+                $closes->manufacturer = $this->writeDict('drinks','manufacturer',$manufacturers[mt_rand(0,count($manufacturers)-1)]);
                 $closes->description = $faker->text;
                 $closes->price = $faker->randomFloat;
                 $closes->count = $faker->randomDigit;
-                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'fashion') );
-                $closes->size = $this->writeDict('closes','size',$sizes[mt_rand(0,count($sizes)-1)]);
-                $closes->season = $this->writeDict('closes','season',$season[mt_rand(0,count($season)-1)]);
-                $closes->sex = $this->writeDict('closes','sex',$sexs[mt_rand(0,count($sexs)-1)]);
-                $closes->category = $this->writeDict('closes','category',$category[mt_rand(0,count($category)-1)]);
-                $closes->country = $this->writeDict('closes','country',$country[mt_rand(0,count($country)-1)]);
+                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'nightlife') );
+                $closes->volume = $this->writeDict('drinks','volume',$volume[mt_rand(0,count($volume)-1)]);
+                $closes->alcoghol = $this->writeDict('drinks','alcoghol',$alco[mt_rand(0,count($alco)-1)]);
+                $closes->stage = $this->writeDict('drinks','stage',$stage[mt_rand(0,count($stage)-1)]);
+                $closes->category = $this->writeDict('drinks','category',$category[mt_rand(0,count($category)-1)]);
+                $closes->country = $this->writeDict('drinks','country',$country[mt_rand(0,count($country)-1)]);
                 $closes->save();
 
             }
@@ -299,18 +300,21 @@ class ControllerCloses extends Controller
     public function __construct()
     {
         //для полей select наполняем возможные значения словаря - обязательные - для всех моделей
-        $this->structure['manufacturer']['options'] = $this->getDictList('closes','manufacturer');
-        $this->structure['country']['options'] = $this->getDictList('closes','country');
+        $this->structure['manufacturer']['options'] = $this->getDictList('drinks','manufacturer');
+        $this->structure['country']['options'] = $this->getDictList('drinks','country');
         //описываем дополнительные поля для модели, которых нет в базовом контроллере
-        $this->structure['size'] = ['title' => 'Размер','type' => 'select'];
-        $this->structure['season'] = ['title' => 'Сезон','type' => 'select'];
-        $this->structure['sex'] = ['title' => 'Пол','type' => 'select'];
+        $this->structure['volume'] = ['title' => 'Объём','type' => 'select'];
+        $this->structure['alcoghol'] = ['title' => 'Крепость','type' => 'select'];
+        $this->structure['stage'] = ['title' => 'Выдержка','type' => 'select'];
         $this->structure['category'] = ['title' => 'Категория','type' => 'select'];
         //для уникальных полей select заполняем возможные значения
-        $this->structure['size']['options'] = $this->getDictList('closes','size');
-        $this->structure['season']['options'] = $this->getDictList('closes','season');
-        $this->structure['sex']['options'] = $this->getDictList('closes','sex');
-        $this->structure['category']['options'] = $this->getDictList('closes','category');
+        $this->structure['volume']['options'] = $this->getDictList('drinks','volume');
+        $this->structure['category']['options'] = $this->getDictList('drinks','category');
+        $this->structure['stage']['options'] = $this->getDictList('drinks','stage');
+        $this->structure['alcoghol']['options'] = $this->getDictList('drinks','alcoghol');
     }
+
+
+
 
 }

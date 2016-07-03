@@ -52,11 +52,13 @@
                         @elseif ($item['type'] == 'select')
                             {{--select--}}
                             <select class="form-edit__input" name="{{ $key }}" >
-                                @foreach ($item['options'] as $index => $value)
-                                    <option value="{{ $index }}" @if ($value == $viewData[$key]) selected  @endif  >
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
+                                @if (isset($item['options']))
+                                    @foreach ($item['options'] as $index => $value)
+                                        <option value="{{ $index }}" @if ($value == $viewData[$key]) selected  @endif  >
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                @endif
                             </select>
                         @elseif ($item['type'] == 'textarea')
                             {{--textarea--}}
