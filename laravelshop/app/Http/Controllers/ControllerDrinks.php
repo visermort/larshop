@@ -16,9 +16,7 @@ class ControllerDrinks extends Controller
     //отображeние списком
     public function index()
     {
-        // $closes = new Closes;
-        $onPage = config('shop.itemsOnPage');
-        $closesData = Drinks::paginate($onPage);
+        $closesData = Drinks::paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
 //        dd($closesData);
@@ -67,7 +65,6 @@ class ControllerDrinks extends Controller
             'stage' => 'integer',
             'category' => 'integer',
         ]);
-        $onPage = config('shop.itemsOnPage');
         $sql='1=1 ';
         $sqlArr=[];
         $filterArr=[];
@@ -122,8 +119,7 @@ class ControllerDrinks extends Controller
             $filterArr ['category']= $request->input('category');
         }
 
-        $closesData = Drinks::whereRaw($sql, $sqlArr)
-            ->paginate($onPage);
+        $closesData = Drinks::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
 
@@ -256,7 +252,7 @@ class ControllerDrinks extends Controller
             // сохранение
             $closes->save();
             //редиректим на список
-            return redirect('/closes');
+            return redirect('/drinks');
         } catch (Exception $e) {
             Log::error('Ошибка редактирования/добавления записи '.$e->getMessage());
             return back()->withInput();

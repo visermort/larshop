@@ -115,3 +115,10 @@ html, body {
 .modal__input.error {
     background-color: #ebcccc;
 }
+
+.form-manager__formgroup {
+    margin-bottom: 15px;
+}
+.form-manager__input {
+    width: 100%;
+}

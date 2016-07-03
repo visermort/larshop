@@ -9,7 +9,7 @@
             <li role="presentation"  class="dropdown">
 
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    Модели <span class="caret"></span>
+                    Категории товаров <span class="caret"></span>
                 </a>
 
                 <ul class="nav nav-pills dropdown-menu nav-stacked">

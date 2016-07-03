@@ -12,7 +12,7 @@
                 <div class="col-sm-6">
                     <ul class="nav nav-pills navbar-right page-header__nav">
                         <li role="presentation">
-                            <a class="btn btn-primary  page-header__button" href="/manager"> <i class="fa fa-list"></i> Назад</a>
+                            <a class="btn   page-header__button" href="/manager"> <i class="fa fa-wrench"></i> Панель администратора</a>
                         </li>
                         {{--<li role="presentation">--}}
                             {{--<button type="submit" class="btn btn-primary page-header__button" form="form-edit"><i class="fa fa-cloud"></i> Сохранить</button>--}}
@@ -30,19 +30,22 @@
                 <div class="row panel-heading">
                     Инструменты настройки модели "{{ $model_title }}"
                 </div>
-                <ul class="nav navbar-nav ">
-                        <li role="presentation">
+                <ul class="nav navbar-nav  ">
+                    <li role="presentation">
                             <a class="btn   " href="/{{ $model }}">
                                 <i class="fa fa-list"></i> Каталог
                             </a>
+                    </li>
+                    <li role="presentation">
                             <a class="btn   " href="/manager/{{ $model }}/add">
-                                <i class="fa fa-list"></i> Добавить запись
+                                <i class="fa fa-plus"></i> Добавить запись
                             </a>
+                    </li>
+                    <li role="presentation">
                             <a class="btn   " href="/manager/{{ $model }}/sample/">
-                                <i class="fa fa-list"></i> Наполнить тестовыми данными
+                                <i class="fa fa-plus"></i><i class="fa fa-plus"></i> Наполнить тестовыми данными
                             </a>
-                        </li>
-
+                    </li>
                 </ul>
 
             </div>

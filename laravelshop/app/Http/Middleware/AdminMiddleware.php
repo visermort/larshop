@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Models\Config;
 
 class AdminMiddleware
 {
@@ -20,7 +21,6 @@ class AdminMiddleware
         {
             return redirect('home');
         }
-
 
         return $next($request);
     }

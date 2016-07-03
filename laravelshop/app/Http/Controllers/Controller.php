@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesResources;
 use App\Models\Images;
 use App\Models\Dict;
+use App\Models\Config;
 use Intervention\Image\Facades\Image as Image;
 
 
@@ -65,7 +66,7 @@ class Controller extends BaseController
             return null;
         }
     }
-    //обработка файла, когда он уже в папке
+    //обработка файла картинки, когда он уже в папке
     protected function writeImagesFromFile($file)
     {
         try {
@@ -192,4 +193,30 @@ class Controller extends BaseController
             return [];
         }
     }
+
+    //получение конфиг из таблицы
+    public function getConfig($idConfig)
+    {
+        $config = Config::where(['id_config' => $idConfig])-> get();
+        if (count($config)) {
+            return $config[0]->config;
+        } else { //если в базе нет, то берём данные по умолчанию из конфигов
+            return config('shop.'.$idConfig);
+        }
+    }
+
+    //запись конфига
+    protected function saveConfig($idConfig,$value)
+    {
+        $config = Config::where(['id_config' => $idConfig])-> get();
+        if (!count($config)) {
+            $config = new Config;
+            $config -> id_config = $idConfig;
+        } else {
+            $config = $config[0];
+        }
+        $config ->config = $value;
+        $config -> save();
+    }
+
 }

@@ -15,9 +15,7 @@ class ControllerCloses extends Controller
     //отображeние списком
     public function index()
     {
-       // $closes = new Closes;
-        $onPage = config('shop.itemsOnPage');
-        $closesData = Closes::paginate($onPage);
+        $closesData = Closes::paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
 //        dd($closesData);
@@ -66,7 +64,6 @@ class ControllerCloses extends Controller
             'sex' => 'integer',
             'category' => 'integer',
         ]);
-        $onPage = config('shop.itemsOnPage');
         $sql='1=1 ';
         $sqlArr=[];
         $filterArr=[];
@@ -121,8 +118,7 @@ class ControllerCloses extends Controller
             $filterArr ['category']= $request->input('category');
         }
 
-        $closesData = Closes::whereRaw($sql, $sqlArr)
-           ->paginate($onPage);
+        $closesData = Closes::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
 
