@@ -11,7 +11,7 @@
                 <div class="col-sm-6">
                     <ul class="nav nav-pills navbar-right page-header__nav">
                         <li role="presentation">
-                            <a class="btn btn-primary  page-header__button" href="/{{ $table }}"> <i class="fa fa-list"></i> Отменить</a>
+                            <a class="btn btn-primary  page-header__button" href="/{{ $table }}"> <i class="fa fa-list"></i> Каталог</a>
                         </li>
                         <li role="presentation">
                             <button type="submit" class="btn btn-primary page-header__button" form="form-edit"><i class="fa fa-cloud"></i> Сохранить</button>
@@ -35,7 +35,7 @@
             {{--форма редактирования--}}
                          {{--         {{ dd($viewData) }}--}}
                         {{--            {{dd($structure)}}--}}
-            <form class="form-edit" action="/{{ $table }}/save" method="post" enctype="multipart/form-data" id="form-edit">
+            <form class="form-edit" action="/manager/{{ $table }}/save" method="post" enctype="multipart/form-data" id="form-edit">
                 {{--проходим по всем элементам струкутры и формируем инпуты в зависимости от типа поля--}}
                 @foreach ($structure as $key => $item)
                 <div class="formgroup clearfix @if ($key == 'id') hidden @endif form-edit__group">

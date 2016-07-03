@@ -243,6 +243,7 @@ class ControllerCloses extends Controller
             $closes->manufacturer = $request->input('manufacturer');
             $closes->price = $request->input('price');
             $closes->count = $request->input('count');
+            $closes->description = $request->input('description');
             if ($imageId) {
                 $closes->image = $imageId;
             }
@@ -288,7 +289,7 @@ class ControllerCloses extends Controller
                 $closes->save();
 
             }
-            echo 'Done!';
+            return back() ;
         } catch (Exception $e) {
             Log::error('Ошибка записи '.$e->getMessage());
             return redirect('/home');

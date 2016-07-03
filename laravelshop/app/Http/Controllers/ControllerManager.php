@@ -30,11 +30,14 @@ class ControllerManager extends Controller
     public function model($model)
     {
         //наполняем массив
+     //   print_r(config('shop.models'));
         $data= array(
+            'model' => $model,
+            'model_title' => config('shop.models')[$model]['title'],
             'title' => 'Магазин - Админ. панель ',
-            'pageTitle' => 'Магазин - административаная панель. Модель '.$model
+            'pageTitle' => 'Магазин - административаная панель. Модель '.config('shop.models')[$model]['title']
         );
-        return view('pages.manager',$data);
+        return view('pages.manager_model',$data);
     }
 
 }

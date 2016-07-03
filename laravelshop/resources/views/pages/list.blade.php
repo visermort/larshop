@@ -92,8 +92,8 @@
                        <a href="/{{ $table }}/{{ $item['id'] }}">Подробно</a>
                        {{--если админ --}}
                        @if ($admin)
-                           <a href="/{{ $table }}/edit/{{ $item['id'] }}">Редактор</a>
-                           <a href="/{{ $table }}/delete/{{ $item['id'] }}">Удалить</a>
+                           <a href="/manager/{{ $table }}/edit/{{ $item['id'] }}">Редактор</a>
+                           <a href="/manager/{{ $table }}/delete/{{ $item['id'] }}">Удалить</a>
                        @endif
 
                    </div>
