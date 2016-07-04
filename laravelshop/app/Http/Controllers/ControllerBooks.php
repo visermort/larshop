@@ -3,32 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Models\Electrics;
+use App\Models\Books;
 use Faker\Factory as Faker;
 use App\Models\Images;
 
-class ControllerElectrics extends Controller
+class ControllerBooks extends Controller
 {
-    private $title = 'Электротовары';
-    private $table = 'electrics';
+    private $title = 'Учебники';
+    private $table = 'books';
 
     //отображeние списком
     public function index()
     {
-        $closesData = Electrics::paginate($this->getConfig('itemsOnPage'));
+        $closesData = Books::paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
         foreach ($closesData as $item){
             $viewData[] = $this->copyData($item);
         }
         //наполняем массив
-      //  print_r($this->structure);
+        //  print_r($this->structure);
         $data= array(
             'title' => 'Магазин - '.$this->title,
             'pageTitle' => $this->title,
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Electrics::count(),
+            'count' => Books::count(),
             'structure' => $this->structure,
             'table' => $this->table,
             'admin' => $this->isAdmin()//являетcя ли пользователь админом
@@ -40,8 +40,8 @@ class ControllerElectrics extends Controller
     public function delete($id)
     {
         //eщё раз проверяем авторизацию пользователя
-        if (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail')) {
-            $closes = Electrics::find($id);
+        if ($this->isAdmin()) {
+            $closes = Books::find($id);
             if (isset($closes['attributes']['image']) && $closes['attributes']['image']) {
                 Images::find($closes['attributes']['image'])->delete();
             }
@@ -60,12 +60,9 @@ class ControllerElectrics extends Controller
             'count' => 'integer|min:0',
             'country' => 'integer',
             'category' => 'integer',
-            'power'=>'integer',
-            'voltage'=>'integer',
-            'massa' => 'numeric',
-            'height' => 'numeric',
-            'width' => 'numeric',
-            'depth' => 'numeric'
+            'pages'=>'integer',
+            'cover' => 'integer',
+            'year' => 'integer'
         ]);
         $sql='1=1 ';
         $sqlArr=[];
@@ -90,54 +87,16 @@ class ControllerElectrics extends Controller
             $sqlArr []= $request->input('price_to');
             $filterArr ['price_to']= $request->input('price_to');
         }
-        if ($request->input('count')) {
-            $sql .=' and count = ?';
-            $sqlArr []= $request->input('count');
-            $filterArr ['count']= $request->input('count');
-        }
-        if ($request->input('country')) {
-            $sql .=' and country = ?';
-            $sqlArr []= $request->input('country');
-            $filterArr ['country']= $request->input('country');
-        }
-        if ($request->input('category')) {
-            $sql .= ' and category = ?';
-            $sqlArr [] = $request->input('category');
-            $filterArr ['category'] = $request->input('category');
-        }
-        if ($request->input('power')) {
-            $sql .=' and power = ?';
-            $sqlArr []= $request->input('power');
-            $filterArr ['power']= $request->input('power');
-        }
-        if ($request->input('voltage')) {
-            $sql .=' and voltage = ?';
-            $sqlArr []= $request->input('voltage');
-            $filterArr ['voltage']= $request->input('voltage');
-        }
-        if ($request->input('massa')) {
-            $sql .=' and massa = ?';
-            $sqlArr []= $request->input('massa');
-            $filterArr ['massa']= $request->input('massa');
-        }
-        if ($request->input('width')) {
-            $sql .=' and width = ?';
-            $sqlArr []= $request->input('width');
-            $filterArr ['width']= $request->input('width');
-        }
-        if ($request->input('height')) {
-            $sql .=' and height = ?';
-            $sqlArr []= $request->input('height');
-            $filterArr ['height']= $request->input('height');
-        }
-        if ($request->input('depth')) {
-            $sql .=' and depth = ?';
-            $sqlArr []= $request->input('depth');
-            $filterArr ['depth']= $request->input('depth');
-        }
+        $sql .= $this->addFilter('count',$request->input('count'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('counry',$request->input('country'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('category',$request->input('category'),$sqlArr,$filterArr);
 
+        $sql .= $this->addFilter('author',$request->input('author'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('pages',$request->input('pages'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('cover',$request->input('cover'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('year',$request->input('year'),$sqlArr,$filterArr);
 
-        $closesData = Electrics::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
+        $closesData = Books::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
 
@@ -150,7 +109,7 @@ class ControllerElectrics extends Controller
             'pageTitle' => $this->title.' - фильтр',
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Electrics::count(),
+            'count' => Books::count(),
             'structure' => $this->structure,
             'table' => $this->table,
             'filterData' => $filterArr, //параметры фильтра, чтобы вернуть в форму
@@ -161,7 +120,7 @@ class ControllerElectrics extends Controller
     //отображение одиночной записи
     public function single($id)
     {
-        $closesData = Electrics::find($id);
+        $closesData = Books::find($id);
 
         $viewData = $this->copyData($closesData);
 
@@ -181,7 +140,7 @@ class ControllerElectrics extends Controller
     //отображение формы редактирования
     public function edit($id)
     {
-        $closesData = Electrics::find($id);
+        $closesData = Books::find($id);
         //обрабатываем словари и изображения
 
         $viewData = $this->copyData($closesData);
@@ -231,12 +190,9 @@ class ControllerElectrics extends Controller
             'image' => 'image',
             'country' => 'integer',
             'category' => 'integer',
-            'power'=>'ingeger',
-            'voltage'=>'ingeger',
-            'massa' => 'numeric',
-            'height' => 'numeric',
-            'width' => 'numeric',
-            'depth' => 'numeric'
+            'pages'=>'integer',
+            'cover' => 'integer',
+            'year' => 'integer'
         ]);
 //        echo 'save'.$request->input('id');
         try {
@@ -250,11 +206,11 @@ class ControllerElectrics extends Controller
             }
             if ($request->id) {
                 //если имеется id, то обновление записи
-                $closes = Electrics::find($request->id);
+                $closes = Books::find($request->id);
             }
             if (!$request->id || !isset($closes)|| !$closes)  {
                 //иначе, или не нашли, тогда новая запись
-                $closes = new Electrics();
+                $closes = new Books();
             }
 
             $closes->name = $request->input('name');
@@ -268,16 +224,14 @@ class ControllerElectrics extends Controller
             $closes->country = $request->input('country');
             $closes->category = $request->input('category');
 
-            $closes->power = $request->input('power');
-            $closes->voltage = $request->input('voltage');
-            $closes->massa = $request->input('massa');
-            $closes->width = $request->input('width');
-            $closes->height = $request->input('heigth');
-            $closes->depth = $request->input('depth');
+            $closes->author = $request->input('author');
+            $closes->pages = $request->input('pages');
+            $closes->cover = $request->input('cover');
+            $closes->year = $request->input('year');
             // сохранение
             $closes->save();
             //редиректим на список
-            return redirect('/electrics');
+            return redirect('/Books');
         } catch (Exception $e) {
             Log::error('Ошибка редактирования/добавления записи '.$e->getMessage());
             return back()->withInput();
@@ -287,29 +241,29 @@ class ControllerElectrics extends Controller
     public function sample()
     {
         $faker = Faker::create();
-        $manufacturers = ['IEK','TDM Electric','Siemens','ABB','Legend'];
-        $category = ['Кабельная пробукция','Счётчики','Розетки и выключатели','Инструмент для монтажа'];
-        $country = ['Россия','Польша','Китай','Турция','Беларусь'];
-        $voltage = ['12','220'];
+        $manufacturers = ['Дрофа','Баллас','Бином','Ювента'];
+        $category = ['Математика','Информатика','Философия','Химия','Филология'];
+        $country = ['Россия','США','Великобритания'];
+        $cover = ['Мягкая','Твёрдый переплёт','Эксклюзивное оформление'];
+        $year = ['2010','2011','2012','2013','2014','2015','2016'];
+
 
         try {
             foreach (range(1, 20) as $index){
-                $closes = new Electrics();
+                $closes = new Books();
                 $closes->name = $faker->word;
                 $closes->manufacturer = $this->writeDict($this->table,'manufacturer',$manufacturers[mt_rand(0,count($manufacturers)-1)]);
                 $closes->description = $faker->text;
                 $closes->price = $faker->randomFloat;
                 $closes->count = $faker->randomDigit;
-                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'technics') );
+                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'abstract') );
                 $closes->country = $this->writeDict($this->table,'country',$country[mt_rand(0,count($country)-1)]);
                 $closes->category = $this->writeDict($this->table,'category',$category[mt_rand(0,count($category)-1)]);
 
-                $closes->power = $faker->randomDigit;
-                $closes->voltage = $this->writeDict($this->table,'voltage',$voltage[mt_rand(0,count($voltage)-1)]);
-                $closes->width = $faker->randomFloat;
-                $closes->massa = $faker->randomFloat;
-                $closes->height = $faker->randomFloat;
-                $closes->depth = $faker->randomFloat;
+                $closes->author = $faker->name;
+                $closes->pages = $faker-> randomDigit;
+                $closes->cover = $this->writeDict($this->table,'cover',$cover[mt_rand(0,count($cover)-1)]);
+                $closes->year = $this->writeDict($this->table,'year',$year[mt_rand(0,count($year)-1)]);
 
                 $closes->save();
             }
@@ -327,15 +281,14 @@ class ControllerElectrics extends Controller
         $this->structure['country']['options'] = $this->getDictList($this->table,'country');
         //описываем дополнительные поля для модели, которых нет в базовом контроллере
         $this->structure['category'] = ['title' => 'Категория','type' => 'select'];
-        $this->structure['power'] = ['title' => 'Мощность, Вт.','type' => 'text'];
-        $this->structure['voltage'] = ['title' => 'Напряжение, В.','type' => 'select'];
-        $this->structure['massa'] = ['title' => 'Вес, кг','type' => 'text'];
-        $this->structure['width'] = ['title' => 'Ширина, см','type' => 'text'];
-        $this->structure['height'] = ['title' => 'Высота, см','type' => 'text'];
-        $this->structure['depth'] = ['title' => 'Глубина, см','type' => 'text'];
+        $this->structure['author'] = ['title' => 'Автор','type' => 'text'];
+        $this->structure['pages'] = ['title' => 'Страниц','type' => 'text'];
+        $this->structure['cover'] = ['title' => 'Обложка','type' => 'select'];
+        $this->structure['year'] = ['title' => 'Год издания','type' => 'select'];
         //для уникальных полей select заполняем возможные значения
         $this->structure['category']['options'] = $this->getDictList($this->table,'category');
-        $this->structure['voltage']['options'] = $this->getDictList($this->table,'voltage');
+        $this->structure['cover']['options'] = $this->getDictList($this->table,'cover');
+        $this->structure['year']['options'] = $this->getDictList($this->table,'year');
     }
 
 }

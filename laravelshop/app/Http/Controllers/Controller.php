@@ -39,6 +39,7 @@ class Controller extends BaseController
     protected function copyData($arr){
         $res=[];
         foreach ($this->structure  as $key => $field) {
+           // echo print_r($field).'<br>';
             switch ($field['type'])  {
                 case 'select': $res[$key] = $this->getDict($arr[$key]);
                             break;
@@ -223,6 +224,15 @@ class Controller extends BaseController
     protected function isAdmin()
     {
         return (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail'));
+    }
+    //при формированиии запроса для фильтра, добавляем sql и 2 массива
+    protected function addFilter($item,$requestItem,&$arr,&$filter)
+    {
+        if ($requestItem) {
+            $arr [] = $requestItem;
+            $filter [$item] = $requestItem;
+        return ' and ' . $item . ' = ?';
+        }
     }
 
 }

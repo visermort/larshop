@@ -51,9 +51,9 @@ return [
             'title' => 'Одежда',
             'href' => 'closes'
         ],
-        'headcloses' => [
+        'headclothes' => [
             'title' => 'Шарфы и шапки',
-            'href' => 'headcloses'
+            'href' => 'headclothes'
         ],
         'phones' => [
             'title' => 'Телефоны',
