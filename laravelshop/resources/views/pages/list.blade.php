@@ -4,8 +4,19 @@
     {{--главное меню  - не на всех страницах--}}
     @include('common.mainmenu')
 
+
+
     <div class="container">
-       <div class="col-sm-3  panel panel-default panel-filter">
+        {{--h1--}}
+        <div class="row">
+            <div class="page-header clearfix">
+                <div class="col-sm-12">
+                    <h1 class="page-header__h1">{{ $pageTitle }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3  panel panel-default panel-filter">
             <div class="row panel-heading">
                 <div class="col-sm-12 product__cell">
                     Фильтр

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Models\Drinks;
 use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Images;
 
 
@@ -32,7 +31,7 @@ class ControllerDrinks extends Controller
             'count' => Drinks::count(),
             'structure' => $this->structure,
             'table' => 'drinks',
-            'admin' => (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail'))//являетcя ли пользователь админом
+            'admin' => $this->isAdmin()//являетcя ли пользователь админом
         );
         return view('pages.list',$data);
 
@@ -136,7 +135,7 @@ class ControllerDrinks extends Controller
             'structure' => $this->structure,
             'table' => 'drinks',
             'filterData' => $filterArr, //параметры фильтра, чтобы вернуть в форму
-            'admin' => (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail'))//являетcя ли пользователь админом
+            'admin' => $this->isAdmin()//являетcя ли пользователь админом
         );
         return view('pages.list',$data);
     }
@@ -309,8 +308,5 @@ class ControllerDrinks extends Controller
         $this->structure['stage']['options'] = $this->getDictList('drinks','stage');
         $this->structure['alcoghol']['options'] = $this->getDictList('drinks','alcoghol');
     }
-
-
-
 
 }

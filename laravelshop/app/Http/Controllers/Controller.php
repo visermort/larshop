@@ -11,6 +11,7 @@ use App\Models\Images;
 use App\Models\Dict;
 use App\Models\Config;
 use Intervention\Image\Facades\Image as Image;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -217,6 +218,11 @@ class Controller extends BaseController
         }
         $config ->config = $value;
         $config -> save();
+    }
+    //является ли пользователь админом - пока данные из конфига, а не из базы
+    protected function isAdmin()
+    {
+        return (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail'));
     }
 
 }

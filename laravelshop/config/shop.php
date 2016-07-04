@@ -23,9 +23,9 @@ return [
             'title' => 'Напитки',
             'href' => 'drinks'
         ],
-        'electric' => [
+        'electrics' => [
             'title' => 'Элекротовары',
-            'href' => 'electric'
+            'href' => 'electrics'
         ],
         'transport_models' => [
             'title' => 'Игрушечные модельки транспорта',

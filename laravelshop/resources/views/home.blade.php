@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{{ config('shop.shopname') }}</div>
+                    <div class="panel-heading">{{ $siteName }}</div>
 
                     <div class="panel-body">
                             <p> Добро пожаловать на начальную станицу магазина </p>

@@ -15,10 +15,10 @@
             <!-- Right Side Of Navbar -->
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">
-                @foreach(config('shop.models') as $menuItem)
+                @foreach(config('shop.models') as $key => $menuItem)
 
                     <li role="presentation">
-                        <a class="btn   " href="/{{ $menuItem['href'] }}">
+                        <a class="btn @if  (isset($table) && $key == $table) active @endif " href="/{{ $menuItem['href'] }}">
                             <i class="fa fa-list"></i> {{$menuItem['title']}}
                         </a>
                     </li>

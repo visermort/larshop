@@ -21,6 +21,10 @@ html, body {
     padding: 15px 0;
 }
 
+.page-header {
+    margin-top: 0;
+}
+
 /*форма редактор*/
 .form-edit__input {
     width: 100%;
@@ -40,7 +44,7 @@ html, body {
     height: 40px;
     padding: 10px;
 }
-.page-header__h1,
+/*.page-header__h1,*/
 .page-header__nav {
     margin-top: 20px;
 }
@@ -75,6 +79,7 @@ html, body {
     padding: 5px;
     box-sizing: border-box;
 }
+/*filter*/
 .filter__label {
     width: 100%;
     text-align: center;
@@ -91,6 +96,11 @@ html, body {
 }
 
 /*модальное окно*/
+/*@media (min-width: 768px) {*/
+    /*.modal-dialog {*/
+        /*width: 400px;*/
+    /*}*/
+
 .modal__text,
 .modal__formgroup,
 .mmodal__label,
@@ -101,6 +111,7 @@ html, body {
 }
 .modal__message_success {
     color: green;
+    font-weight: bold;
 }
 .modal__message_error {
     color: red;

@@ -2,34 +2,35 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests;
-use App\Models\Closes;
+use App\Models\Electrics;
 use Faker\Factory as Faker;
 use App\Models\Images;
 
-class ControllerCloses extends Controller
+class ControllerElectrics extends Controller
 {
+    private $title = 'Электротовары';
+    private $table = 'electrics';
 
     //отображeние списком
     public function index()
     {
-        $closesData = Closes::paginate($this->getConfig('itemsOnPage'));
+        $closesData = Electrics::paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
-//        dd($closesData);
         foreach ($closesData as $item){
             $viewData[] = $this->copyData($item);
         }
         //наполняем массив
+      //  print_r($this->structure);
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда',
+            'title' => 'Магазин - '.$this->title,
+            'pageTitle' => $this->title,
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Closes::count(),
+            'count' => Electrics::count(),
             'structure' => $this->structure,
-            'table' => 'closes',
+            'table' => $this->table,
             'admin' => $this->isAdmin()//являетcя ли пользователь админом
         );
         return view('pages.list',$data);
@@ -40,7 +41,7 @@ class ControllerCloses extends Controller
     {
         //eщё раз проверяем авторизацию пользователя
         if (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail')) {
-            $closes = Closes::find($id);
+            $closes = Electrics::find($id);
             if (isset($closes['attributes']['image']) && $closes['attributes']['image']) {
                 Images::find($closes['attributes']['image'])->delete();
             }
@@ -58,10 +59,13 @@ class ControllerCloses extends Controller
             'price_to' => 'numeric|min:0',
             'count' => 'integer|min:0',
             'country' => 'integer',
-            'size' => 'integer',
-            'season' => 'integer',
-            'sex' => 'integer',
             'category' => 'integer',
+            'power'=>'ingeger',
+            'voltage'=>'ingeger',
+            'massa' => 'numeric',
+            'height' => 'numeric',
+            'width' => 'numeric',
+            'depth' => 'numeric'
         ]);
         $sql='1=1 ';
         $sqlArr=[];
@@ -96,28 +100,44 @@ class ControllerCloses extends Controller
             $sqlArr []= $request->input('country');
             $filterArr ['country']= $request->input('country');
         }
-        if ($request->input('size')) {
-            $sql .=' and size = ?';
-            $sqlArr []= $request->input('size');
-            $filterArr ['size']= $request->input('size');
-        }
-        if ($request->input('season')) {
-            $sql .=' and season = ?';
-            $sqlArr []= $request->input('season');
-            $filterArr ['season']= $request->input('season');
-        }
-        if ($request->input('sex')) {
-            $sql .=' and sex = ?';
-            $sqlArr []= $request->input('sex');
-            $filterArr ['sex']= $request->input('sex');
-        }
         if ($request->input('category')) {
-            $sql .=' and category = ?';
-            $sqlArr []= $request->input('category');
-            $filterArr ['category']= $request->input('category');
+            $sql .= ' and category = ?';
+            $sqlArr [] = $request->input('category');
+            $filterArr ['category'] = $request->input('category');
+        }
+        if ($request->input('power')) {
+            $sql .=' and power = ?';
+            $sqlArr []= $request->input('power');
+            $filterArr ['power']= $request->input('power');
+        }
+        if ($request->input('voltage')) {
+            $sql .=' and voltage = ?';
+            $sqlArr []= $request->input('voltage');
+            $filterArr ['voltage']= $request->input('voltage');
+        }
+        if ($request->input('massa')) {
+            $sql .=' and massa = ?';
+            $sqlArr []= $request->input('massa');
+            $filterArr ['massa']= $request->input('massa');
+        }
+        if ($request->input('width')) {
+            $sql .=' and width = ?';
+            $sqlArr []= $request->input('width');
+            $filterArr ['width']= $request->input('width');
+        }
+        if ($request->input('height')) {
+            $sql .=' and height = ?';
+            $sqlArr []= $request->input('height');
+            $filterArr ['height']= $request->input('height');
+        }
+        if ($request->input('depth')) {
+            $sql .=' and depth = ?';
+            $sqlArr []= $request->input('depth');
+            $filterArr ['depth']= $request->input('depth');
         }
 
-        $closesData = Closes::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
+
+        $closesData = Electrics::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
 
@@ -126,13 +146,13 @@ class ControllerCloses extends Controller
         }
         //наполняем массив
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда - фильтр',
+            'title' => 'Магазин - '.$this->title,
+            'pageTitle' => $this->title.' - фильтр',
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Closes::count(),
+            'count' => Electrics::count(),
             'structure' => $this->structure,
-            'table' => 'closes',
+            'table' => $this->table,
             'filterData' => $filterArr, //параметры фильтра, чтобы вернуть в форму
             'admin' => $this->isAdmin()//являетcя ли пользователь админом
         );
@@ -141,18 +161,18 @@ class ControllerCloses extends Controller
     //отображение одиночной записи
     public function single($id)
     {
-        $closesData = Closes::find($id);
+        $closesData = Electrics::find($id);
 
         $viewData = $this->copyData($closesData);
 
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда - Карточка товара',
+            'title' => 'Магазин - '.$this->title,
+            'pageTitle' => $this->title.' - Карточка товара',
             'viewData' => $viewData,
             'modelData' => $closesData,
             'structure' => $this->structure,
-            'table' => 'closes',
-            'productTitle' => 'Одежда',
+            'table' => $this->table,
+            'productTitle' => $this->title,
             'id' => $id
         );
         return view('pages.product',$data);
@@ -161,19 +181,19 @@ class ControllerCloses extends Controller
     //отображение формы редактирования
     public function edit($id)
     {
-        $closesData = Closes::find($id);
+        $closesData = Electrics::find($id);
         //обрабатываем словари и изображения
 
         $viewData = $this->copyData($closesData);
 
         //наполняем массив
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда - Редактор. Запись '.$id,
+            'title' => 'Магазин - '.$this->title,
+            'pageTitle' => $this->title.' - Редактор. Запись '.$id,
             'viewData' => $viewData,
             'modelData' => $closesData,
             'structure' => $this->structure,
-            'table' => 'closes',
+            'table' => $this->table,
             'id' => $id
         );
         return view('pages.edit',$data);
@@ -189,12 +209,12 @@ class ControllerCloses extends Controller
         }
         //наполняем массив
         $data= array(
-            'title' => 'Магазин - Одежда',
-            'pageTitle' => 'Одежда - Редактор. Новая запись',
+            'title' => 'Магазин - '.$this->title,
+            'pageTitle' => $this->title.' - Редактор. Новая запись',
             'viewData' => $viewData,//пустой массив
             'modelData' => [],//пустой массив
             'structure' => $this->structure,
-            'table' => 'closes',
+            'table' => $this->table,
             'id' => ''
         );
         return view('pages.edit',$data);
@@ -210,10 +230,13 @@ class ControllerCloses extends Controller
             'count' => 'integer|required|min:0',
             'image' => 'image',
             'country' => 'integer',
-            'size' => 'integer',
-            'season' => 'integer',
-            'sex' => 'integer',
             'category' => 'integer',
+            'power'=>'ingeger',
+            'voltage'=>'ingeger',
+            'massa' => 'numeric',
+            'height' => 'numeric',
+            'width' => 'numeric',
+            'depth' => 'numeric'
         ]);
 //        echo 'save'.$request->input('id');
         try {
@@ -227,11 +250,11 @@ class ControllerCloses extends Controller
             }
             if ($request->id) {
                 //если имеется id, то обновление записи
-                $closes = Closes::find($request->id);
+                $closes = Electrics::find($request->id);
             }
             if (!$request->id || !isset($closes)|| !$closes)  {
                 //иначе, или не нашли, тогда новая запись
-                $closes = new Closes();
+                $closes = new Electrics();
             }
 
             $closes->name = $request->input('name');
@@ -243,14 +266,18 @@ class ControllerCloses extends Controller
                 $closes->image = $imageId;
             }
             $closes->country = $request->input('country');
-            $closes->size = $request->input('size');
-            $closes->season = $request->input('season');
-            $closes->sex = $request->input('sex');
             $closes->category = $request->input('category');
+
+            $closes->power = $request->input('power');
+            $closes->voltage = $request->input('voltage');
+            $closes->massa = $request->input('massa');
+            $closes->width = $request->input('width');
+            $closes->height = $request->input('heigth');
+            $closes->depth = $request->input('depth');
             // сохранение
             $closes->save();
             //редиректим на список
-            return redirect('/closes');
+            return redirect('/electrics');
         } catch (Exception $e) {
             Log::error('Ошибка редактирования/добавления записи '.$e->getMessage());
             return back()->withInput();
@@ -260,29 +287,31 @@ class ControllerCloses extends Controller
     public function sample()
     {
         $faker = Faker::create();
-        $manufacturers = ['Berries','Dress','Jerutti'];
-        $sizes = ['xs','s','m','l','xl','xxl'];
-        $season = ['Зима','Лето','Весна-осень'];
-        $sexs = ['М','Ж','Детская'];
-        $category = ['Рубашки','Брюки','Куркти','Пальто','Блузки','Юбки'];
-        $country = ['Россия','Китай','Германия','Франция'];
+        $manufacturers = ['IEK','TDM Electric','Siemens','ABB','Legend'];
+        $category = ['Кабельная пробукция','Счётчики','Розетки и выключатели','Инструмент для монтажа'];
+        $country = ['Россия','Польша','Китай','Турция','Беларусь'];
+        $voltage = ['12','220'];
 
         try {
             foreach (range(1, 20) as $index){
-                $closes = new Closes();
+                $closes = new Electrics();
                 $closes->name = $faker->word;
-                $closes->manufacturer = $this->writeDict('closes','manufacturer',$manufacturers[mt_rand(0,count($manufacturers)-1)]);
+                $closes->manufacturer = $this->writeDict($this->table,'manufacturer',$manufacturers[mt_rand(0,count($manufacturers)-1)]);
                 $closes->description = $faker->text;
                 $closes->price = $faker->randomFloat;
                 $closes->count = $faker->randomDigit;
-                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'fashion') );
-                $closes->size = $this->writeDict('closes','size',$sizes[mt_rand(0,count($sizes)-1)]);
-                $closes->season = $this->writeDict('closes','season',$season[mt_rand(0,count($season)-1)]);
-                $closes->sex = $this->writeDict('closes','sex',$sexs[mt_rand(0,count($sexs)-1)]);
-                $closes->category = $this->writeDict('closes','category',$category[mt_rand(0,count($category)-1)]);
-                $closes->country = $this->writeDict('closes','country',$country[mt_rand(0,count($country)-1)]);
-                $closes->save();
+                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'technics') );
+                $closes->country = $this->writeDict($this->table,'country',$country[mt_rand(0,count($country)-1)]);
+                $closes->category = $this->writeDict($this->table,'category',$category[mt_rand(0,count($category)-1)]);
 
+                $closes->power = $faker->randomDigit;
+                $closes->voltage = $this->writeDict($this->table,'voltage',$voltage[mt_rand(0,count($voltage)-1)]);
+                $closes->width = $faker->randomFloat;
+                $closes->massa = $faker->randomFloat;
+                $closes->height = $faker->randomFloat;
+                $closes->depth = $faker->randomFloat;
+
+                $closes->save();
             }
             return back() ;
         } catch (Exception $e) {
@@ -294,18 +323,19 @@ class ControllerCloses extends Controller
     public function __construct()
     {
         //для полей select наполняем возможные значения словаря - обязательные - для всех моделей
-        $this->structure['manufacturer']['options'] = $this->getDictList('closes','manufacturer');
-        $this->structure['country']['options'] = $this->getDictList('closes','country');
+        $this->structure['manufacturer']['options'] = $this->getDictList($this->table,'manufacturer');
+        $this->structure['country']['options'] = $this->getDictList($this->table,'country');
         //описываем дополнительные поля для модели, которых нет в базовом контроллере
-        $this->structure['size'] = ['title' => 'Размер','type' => 'select'];
-        $this->structure['season'] = ['title' => 'Сезон','type' => 'select'];
-        $this->structure['sex'] = ['title' => 'Пол','type' => 'select'];
         $this->structure['category'] = ['title' => 'Категория','type' => 'select'];
+        $this->structure['power'] = ['title' => 'Мощность, Вт.','type' => 'text'];
+        $this->structure['voltage'] = ['title' => 'Напряжение, В.','type' => 'select'];
+        $this->structure['massa'] = ['title' => 'Вес, кг','type' => 'text'];
+        $this->structure['width'] = ['title' => 'Ширина, см','type' => 'text'];
+        $this->structure['height'] = ['title' => 'Высота, см','type' => 'text'];
+        $this->structure['depth'] = ['title' => 'Глубина, см','type' => 'text'];
         //для уникальных полей select заполняем возможные значения
-        $this->structure['size']['options'] = $this->getDictList('closes','size');
-        $this->structure['season']['options'] = $this->getDictList('closes','season');
-        $this->structure['sex']['options'] = $this->getDictList('closes','sex');
-        $this->structure['category']['options'] = $this->getDictList('closes','category');
+        $this->structure['category']['options'] = $this->getDictList($this->table,'category');
+        $this->structure['voltage']['options'] = $this->getDictList($this->table,'voltage');
     }
 
 }
