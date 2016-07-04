@@ -63,9 +63,9 @@ return [
             'title' => 'Линзы',
             'href' => 'contact_lenses'
         ],
-        'others' => [
-            'title' => 'Другое',
-            'href' => 'others'
+        'fishing' => [
+            'title' => 'Рыболовные удочки',
+            'href' => 'fishing'
        ]
     ]
 
