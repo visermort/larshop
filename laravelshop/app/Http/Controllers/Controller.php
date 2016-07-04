@@ -140,6 +140,9 @@ class Controller extends BaseController
        //     'table_name' => $table,
        //     'field_name' => $field,
        //     'value' => $value));
+        if (!$value) {
+            return '';
+        }
         $dict = Dict::where('table_name', $table)
             ->where('field_name', $field)
             ->where('value', $value)

@@ -3,19 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Models\Books;
+use App\Models\Animal_food;
 use Faker\Factory as Faker;
 use App\Models\Images;
 
-class ControllerBooks extends Controller
+class ControllerAnimal_food extends Controller
 {
-    private $title = 'Учебники';
-    private $table = 'books';
+    private $title = 'Корм для животных';
+    private $table = 'animal_food';
 
     //отображeние списком
     public function index()
     {
-        $closesData = Books::paginate($this->getConfig('itemsOnPage'));
+        $closesData = Animal_food::paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
         foreach ($closesData as $item){
@@ -28,7 +28,7 @@ class ControllerBooks extends Controller
             'pageTitle' => $this->title,
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Books::count(),
+            'count' => Animal_food::count(),
             'structure' => $this->structure,
             'table' => $this->table,
             'admin' => $this->isAdmin()//являетcя ли пользователь админом
@@ -41,7 +41,7 @@ class ControllerBooks extends Controller
     {
         //eщё раз проверяем авторизацию пользователя
         if ($this->isAdmin()) {
-            $closes = Books::find($id);
+            $closes = Animal_food::find($id);
             if (isset($closes['attributes']['image']) && $closes['attributes']['image']) {
                 Images::find($closes['attributes']['image'])->delete();
             }
@@ -59,10 +59,11 @@ class ControllerBooks extends Controller
             'price_to' => 'numeric|min:0',
             'count' => 'integer|min:0',
             'country' => 'integer',
-            'category' => 'integer',
-            'pages'=>'integer',
-            'cover' => 'integer',
-            'year' => 'integer'
+            'type' => 'integer',
+            'animal'=>'integer',
+            'age' => 'integer',
+            'taste' => 'integer',
+            'special' => 'integer'
         ]);
         $sql='1=1 ';
         $sqlArr=[];
@@ -89,14 +90,14 @@ class ControllerBooks extends Controller
         }
         $sql .= $this->addFilter('count',$request->input('count'),$sqlArr,$filterArr);
         $sql .= $this->addFilter('country',$request->input('country'),$sqlArr,$filterArr);
-        $sql .= $this->addFilter('category',$request->input('category'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('type',$request->input('type'),$sqlArr,$filterArr);
 
-        $sql .= $this->addFilter('author',$request->input('author'),$sqlArr,$filterArr);
-        $sql .= $this->addFilter('pages',$request->input('pages'),$sqlArr,$filterArr);
-        $sql .= $this->addFilter('cover',$request->input('cover'),$sqlArr,$filterArr);
-        $sql .= $this->addFilter('year',$request->input('year'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('animal',$request->input('animal'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('age',$request->input('age'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('taste',$request->input('taste'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('special',$request->input('special'),$sqlArr,$filterArr);
 
-        $closesData = Books::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
+        $closesData = Animal_food::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
 
@@ -109,7 +110,7 @@ class ControllerBooks extends Controller
             'pageTitle' => $this->title.' - фильтр',
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Books::count(),
+            'count' => Animal_food::count(),
             'structure' => $this->structure,
             'table' => $this->table,
             'filterData' => $filterArr, //параметры фильтра, чтобы вернуть в форму
@@ -120,7 +121,7 @@ class ControllerBooks extends Controller
     //отображение одиночной записи
     public function single($id)
     {
-        $closesData = Books::find($id);
+        $closesData = Animal_food::find($id);
 
         $viewData = $this->copyData($closesData);
 
@@ -140,7 +141,7 @@ class ControllerBooks extends Controller
     //отображение формы редактирования
     public function edit($id)
     {
-        $closesData = Books::find($id);
+        $closesData = Animal_food::find($id);
         //обрабатываем словари и изображения
 
         $viewData = $this->copyData($closesData);
@@ -189,10 +190,11 @@ class ControllerBooks extends Controller
             'count' => 'integer|required|min:0',
             'image' => 'image',
             'country' => 'integer',
-            'category' => 'integer',
-            'pages'=>'integer',
-            'cover' => 'integer',
-            'year' => 'integer'
+            'type' => 'integer',
+            'animal'=>'integer',
+            'age' => 'integer',
+            'taste' => 'integer',
+            'special' => 'integer'
         ]);
 //        echo 'save'.$request->input('id');
         try {
@@ -206,11 +208,11 @@ class ControllerBooks extends Controller
             }
             if ($request->id) {
                 //если имеется id, то обновление записи
-                $closes = Books::find($request->id);
+                $closes = Animal_food::find($request->id);
             }
             if (!$request->id || !isset($closes)|| !$closes)  {
                 //иначе, или не нашли, тогда новая запись
-                $closes = new Books();
+                $closes = new Animal_food();
             }
 
             $closes->name = $request->input('name');
@@ -222,16 +224,16 @@ class ControllerBooks extends Controller
                 $closes->image = $imageId;
             }
             $closes->country = $request->input('country');
-            $closes->category = $request->input('category');
+            $closes->type = $request->input('type');
 
-            $closes->author = $request->input('author');
-            $closes->pages = $request->input('pages');
-            $closes->cover = $request->input('cover');
-            $closes->year = $request->input('year');
+            $closes->animal = $request->input('animal');
+            $closes->age = $request->input('age');
+            $closes->taste = $request->input('taste');
+            $closes->special = $request->input('special');
             // сохранение
             $closes->save();
             //редиректим на список
-            return redirect('/Books');
+            return redirect('/animal_food');
         } catch (Exception $e) {
             Log::error('Ошибка редактирования/добавления записи '.$e->getMessage());
             return back()->withInput();
@@ -241,30 +243,31 @@ class ControllerBooks extends Controller
     public function sample()
     {
         $faker = Faker::create();
-        $manufacturers = ['Дрофа','Баллас','Бином','Ювента'];
-        $category = ['Математика','Информатика','Философия','Химия','Филология'];
-        $country = ['Россия','США','Великобритания'];
-        $cover = ['Мягкая','Твёрдый переплёт','Эксклюзивное оформление'];
-        $year = ['2010','2011','2012','2013','2014','2015','2016'];
+        $manufacturers = ['Almo Nature','Hills','Royal Canin','Tetra','Четвероногий Гурман'];
+        $type = ['Корм сухой','Корм консервированный','Добавка','Каши и хлопья','Напитки'];
+        $country = ['Россия','Германия','Нидеранды','Канада'];
+        $age = ['Для маленьких','Для взрослых','Для пожилых'];
+        $animal = ['Для кошек','Для собак','Для рыб','Для птиц','Для грызунов'];
+        $taste = ['Мясное ассорти','Рыбное ассорти','Мясо-овощное ассорти','Злаковое ассорти'];
+        $special = ['Без ароматизаторов','Без ГМО','Без соли','Без консервантов','Без красителей','','','','','',];//пустые, чтобы вставлялись  пустые значения
 
 
         try {
             foreach (range(1, 20) as $index){
-                $closes = new Books();
+                $closes = new Animal_food();
                 $closes->name = $faker->word;
                 $closes->manufacturer = $this->writeDict($this->table,'manufacturer',$manufacturers[mt_rand(0,count($manufacturers)-1)]);
                 $closes->description = $faker->text;
                 $closes->price = $faker->randomFloat;
                 $closes->count = $faker->randomDigit;
-                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'abstract') );
+                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'animals') );
                 $closes->country = $this->writeDict($this->table,'country',$country[mt_rand(0,count($country)-1)]);
-                $closes->category = $this->writeDict($this->table,'category',$category[mt_rand(0,count($category)-1)]);
+                $closes->type = $this->writeDict($this->table,'type',$type[mt_rand(0,count($type)-1)]);
 
-                $closes->author = $faker->name;
-                $closes->pages = $faker-> randomDigit;
-                $closes->cover = $this->writeDict($this->table,'cover',$cover[mt_rand(0,count($cover)-1)]);
-                $closes->year = $this->writeDict($this->table,'year',$year[mt_rand(0,count($year)-1)]);
-
+                $closes->animal = $this->writeDict($this->table,'animal',$animal[mt_rand(0,count($animal)-1)]);
+                $closes->age = $this->writeDict($this->table,'age',$age[mt_rand(0,count($age)-1)]);
+                $closes->taste = $this->writeDict($this->table,'taste',$taste[mt_rand(0,count($taste)-1)]);
+                $closes->special =$this->writeDict($this->table,'special',$special[mt_rand(0,count($special)-1)]);
                 $closes->save();
             }
             return back() ;
@@ -280,15 +283,17 @@ class ControllerBooks extends Controller
         $this->structure['manufacturer']['options'] = $this->getDictList($this->table,'manufacturer');
         $this->structure['country']['options'] = $this->getDictList($this->table,'country');
         //описываем дополнительные поля для модели, которых нет в базовом контроллере
-        $this->structure['category'] = ['title' => 'Категория','type' => 'select'];
-        $this->structure['author'] = ['title' => 'Автор','type' => 'text'];
-        $this->structure['pages'] = ['title' => 'Страниц','type' => 'text'];
-        $this->structure['cover'] = ['title' => 'Обложка','type' => 'select'];
-        $this->structure['year'] = ['title' => 'Год издания','type' => 'select'];
+        $this->structure['type'] = ['title' => 'Тип корма','type' => 'select'];
+        $this->structure['animal'] = ['title' => 'Предназначение','type' => 'select'];
+        $this->structure['age'] = ['title' => 'Возраст животного','type' => 'select'];
+        $this->structure['taste'] = ['title' => 'Вид вкуса','type' => 'select'];
+        $this->structure['special'] = ['title' => 'Особенности','type' => 'select'];
         //для уникальных полей select заполняем возможные значения
-        $this->structure['category']['options'] = $this->getDictList($this->table,'category');
-        $this->structure['cover']['options'] = $this->getDictList($this->table,'cover');
-        $this->structure['year']['options'] = $this->getDictList($this->table,'year');
+        $this->structure['type']['options'] = $this->getDictList($this->table,'type');
+        $this->structure['animal']['options'] = $this->getDictList($this->table,'animal');
+        $this->structure['age']['options'] = $this->getDictList($this->table,'age');
+        $this->structure['taste']['options'] = $this->getDictList($this->table,'taste');
+        $this->structure['special']['options'] = $this->getDictList($this->table,'special');
     }
 
 }

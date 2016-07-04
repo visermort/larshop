@@ -90,7 +90,7 @@ class ControllerHeadclothes extends Controller
             $filterArr ['price_to']= $request->input('price_to');
         }
         $sql .= $this->addFilter('count',$request->input('count'),$sqlArr,$filterArr);
-        $sql .= $this->addFilter('counry',$request->input('country'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('country',$request->input('country'),$sqlArr,$filterArr);
         $sql .= $this->addFilter('category',$request->input('category'),$sqlArr,$filterArr);
 
         $sql .= $this->addFilter('style',$request->input('style'),$sqlArr,$filterArr);

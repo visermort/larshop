@@ -3,19 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Models\Books;
+use App\Models\Watch;
 use Faker\Factory as Faker;
 use App\Models\Images;
 
-class ControllerBooks extends Controller
+class ControllerWatch extends Controller
 {
-    private $title = 'Учебники';
-    private $table = 'books';
+    private $title = 'Наручные часы';
+    private $table = 'watch';
 
     //отображeние списком
     public function index()
     {
-        $closesData = Books::paginate($this->getConfig('itemsOnPage'));
+        $closesData = Watch::paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
         foreach ($closesData as $item){
@@ -28,7 +28,7 @@ class ControllerBooks extends Controller
             'pageTitle' => $this->title,
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Books::count(),
+            'count' => Watch::count(),
             'structure' => $this->structure,
             'table' => $this->table,
             'admin' => $this->isAdmin()//являетcя ли пользователь админом
@@ -41,7 +41,7 @@ class ControllerBooks extends Controller
     {
         //eщё раз проверяем авторизацию пользователя
         if ($this->isAdmin()) {
-            $closes = Books::find($id);
+            $closes = Watch::find($id);
             if (isset($closes['attributes']['image']) && $closes['attributes']['image']) {
                 Images::find($closes['attributes']['image'])->delete();
             }
@@ -59,10 +59,12 @@ class ControllerBooks extends Controller
             'price_to' => 'numeric|min:0',
             'count' => 'integer|min:0',
             'country' => 'integer',
-            'category' => 'integer',
-            'pages'=>'integer',
-            'cover' => 'integer',
-            'year' => 'integer'
+            'style' => 'integer',
+            'type' => 'integer',
+            'category'=>'integer',
+            'waterproof' => 'integer',
+            'material' => 'integer',
+            'display' => 'integer'
         ]);
         $sql='1=1 ';
         $sqlArr=[];
@@ -89,14 +91,16 @@ class ControllerBooks extends Controller
         }
         $sql .= $this->addFilter('count',$request->input('count'),$sqlArr,$filterArr);
         $sql .= $this->addFilter('country',$request->input('country'),$sqlArr,$filterArr);
+
+
+        $sql .= $this->addFilter('style',$request->input('style'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('type',$request->input('type'),$sqlArr,$filterArr);
         $sql .= $this->addFilter('category',$request->input('category'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('waterproof',$request->input('waterproof'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('material',$request->input('material'),$sqlArr,$filterArr);
+        $sql .= $this->addFilter('display',$request->input('display'),$sqlArr,$filterArr);
 
-        $sql .= $this->addFilter('author',$request->input('author'),$sqlArr,$filterArr);
-        $sql .= $this->addFilter('pages',$request->input('pages'),$sqlArr,$filterArr);
-        $sql .= $this->addFilter('cover',$request->input('cover'),$sqlArr,$filterArr);
-        $sql .= $this->addFilter('year',$request->input('year'),$sqlArr,$filterArr);
-
-        $closesData = Books::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
+        $closesData = Watch::whereRaw($sql, $sqlArr) -> paginate($this->getConfig('itemsOnPage'));
         //обрабатываем словари и изображения
         $viewData=[];
 
@@ -109,7 +113,7 @@ class ControllerBooks extends Controller
             'pageTitle' => $this->title.' - фильтр',
             'viewData' => $viewData,
             'modelData' => $closesData,
-            'count' => Books::count(),
+            'count' => Watch::count(),
             'structure' => $this->structure,
             'table' => $this->table,
             'filterData' => $filterArr, //параметры фильтра, чтобы вернуть в форму
@@ -120,7 +124,7 @@ class ControllerBooks extends Controller
     //отображение одиночной записи
     public function single($id)
     {
-        $closesData = Books::find($id);
+        $closesData = Watch::find($id);
 
         $viewData = $this->copyData($closesData);
 
@@ -140,7 +144,7 @@ class ControllerBooks extends Controller
     //отображение формы редактирования
     public function edit($id)
     {
-        $closesData = Books::find($id);
+        $closesData = Watch::find($id);
         //обрабатываем словари и изображения
 
         $viewData = $this->copyData($closesData);
@@ -189,10 +193,12 @@ class ControllerBooks extends Controller
             'count' => 'integer|required|min:0',
             'image' => 'image',
             'country' => 'integer',
-            'category' => 'integer',
-            'pages'=>'integer',
-            'cover' => 'integer',
-            'year' => 'integer'
+            'style' => 'integer',
+            'type' => 'integer',
+            'category'=>'integer',
+            'waterproof' => 'integer',
+            'material' => 'integer',
+            'display' => 'integer'
         ]);
 //        echo 'save'.$request->input('id');
         try {
@@ -206,11 +212,11 @@ class ControllerBooks extends Controller
             }
             if ($request->id) {
                 //если имеется id, то обновление записи
-                $closes = Books::find($request->id);
+                $closes = Watch::find($request->id);
             }
             if (!$request->id || !isset($closes)|| !$closes)  {
                 //иначе, или не нашли, тогда новая запись
-                $closes = new Books();
+                $closes = new Watch();
             }
 
             $closes->name = $request->input('name');
@@ -222,16 +228,17 @@ class ControllerBooks extends Controller
                 $closes->image = $imageId;
             }
             $closes->country = $request->input('country');
-            $closes->category = $request->input('category');
 
-            $closes->author = $request->input('author');
-            $closes->pages = $request->input('pages');
-            $closes->cover = $request->input('cover');
-            $closes->year = $request->input('year');
+            $closes->style = $request->input('style');
+            $closes->type = $request->input('type');
+            $closes->category = $request->input('category');
+            $closes->waterproof = $request->input('waterproof');
+            $closes->material = $request->input('material');
+            $closes->display = $request->input('display');
             // сохранение
             $closes->save();
             //редиректим на список
-            return redirect('/Books');
+            return redirect('/Watch');
         } catch (Exception $e) {
             Log::error('Ошибка редактирования/добавления записи '.$e->getMessage());
             return back()->withInput();
@@ -241,29 +248,34 @@ class ControllerBooks extends Controller
     public function sample()
     {
         $faker = Faker::create();
-        $manufacturers = ['Дрофа','Баллас','Бином','Ювента'];
-        $category = ['Математика','Информатика','Философия','Химия','Филология'];
-        $country = ['Россия','США','Великобритания'];
-        $cover = ['Мягкая','Твёрдый переплёт','Эксклюзивное оформление'];
-        $year = ['2010','2011','2012','2013','2014','2015','2016'];
+        $manufacturers = ['Acteo','Alpina','Bluemarine','Boss Orange','Полёт'];
+        $country = ['Россия','Германия','Швейцария','Австрия'];
+
+        $style = ['Военные','Дизайнерские','На каждый день','Спортивные','Под костюм'];
+        $type = ['Механические','Кварцевые','Солнечная батарея','Автокварц','С ручным заводом'];
+        $category = ['Для бега','Для спорта','Для плавания','','','','',''];
+        $waterproof = ['Мытьё рук, дождь','Мытьё машины, душ','Плавание без ныряния','Ныряние без акваланга','Ныряние с аквалангом'];
+        $material = ['Сталь','Титан','Пластик','Силикон'];
+        $display = ['Стрелочный','Цифровой','Комбинированный'];
 
 
         try {
             foreach (range(1, 20) as $index){
-                $closes = new Books();
+                $closes = new Watch();
                 $closes->name = $faker->word;
                 $closes->manufacturer = $this->writeDict($this->table,'manufacturer',$manufacturers[mt_rand(0,count($manufacturers)-1)]);
                 $closes->description = $faker->text;
                 $closes->price = $faker->randomFloat;
                 $closes->count = $faker->randomDigit;
-                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'abstract') );
+                $closes->image = $this->writeImagesFromFile($faker->image(public_path().'/'.config('shop.images'),800,600,'business') );
                 $closes->country = $this->writeDict($this->table,'country',$country[mt_rand(0,count($country)-1)]);
-                $closes->category = $this->writeDict($this->table,'category',$category[mt_rand(0,count($category)-1)]);
 
-                $closes->author = $faker->name;
-                $closes->pages = $faker-> randomDigit;
-                $closes->cover = $this->writeDict($this->table,'cover',$cover[mt_rand(0,count($cover)-1)]);
-                $closes->year = $this->writeDict($this->table,'year',$year[mt_rand(0,count($year)-1)]);
+                $closes->style = $this->writeDict($this->table,'style',$style[mt_rand(0,count($style)-1)]);
+                $closes->type = $this->writeDict($this->table,'type',$type[mt_rand(0,count($type)-1)]);
+                $closes->category = $this->writeDict($this->table,'category',$category[mt_rand(0,count($category)-1)]);
+                $closes->waterproof = $this->writeDict($this->table,'waterproof',$waterproof[mt_rand(0,count($waterproof)-1)]);
+                $closes->material = $this->writeDict($this->table,'material',$material[mt_rand(0,count($material)-1)]);
+                $closes->display =$this->writeDict($this->table,'display',$display[mt_rand(0,count($display)-1)]);
 
                 $closes->save();
             }
@@ -280,15 +292,19 @@ class ControllerBooks extends Controller
         $this->structure['manufacturer']['options'] = $this->getDictList($this->table,'manufacturer');
         $this->structure['country']['options'] = $this->getDictList($this->table,'country');
         //описываем дополнительные поля для модели, которых нет в базовом контроллере
-        $this->structure['category'] = ['title' => 'Категория','type' => 'select'];
-        $this->structure['author'] = ['title' => 'Автор','type' => 'text'];
-        $this->structure['pages'] = ['title' => 'Страниц','type' => 'text'];
-        $this->structure['cover'] = ['title' => 'Обложка','type' => 'select'];
-        $this->structure['year'] = ['title' => 'Год издания','type' => 'select'];
+        $this->structure['style'] = ['title' => 'Стиль','type' => 'select'];
+        $this->structure['type'] = ['title' => 'Тип механизма','type' => 'select'];
+        $this->structure['category'] = ['title' => 'Функциональность','type' => 'select'];
+        $this->structure['waterproof'] = ['title' => 'Водозащита','type' => 'select'];
+        $this->structure['material'] = ['title' => 'Материал корпуса','type' => 'select'];
+        $this->structure['display'] = ['title' => 'Циферблат','type' => 'select'];
         //для уникальных полей select заполняем возможные значения
+        $this->structure['style']['options'] = $this->getDictList($this->table,'style');
+        $this->structure['type']['options'] = $this->getDictList($this->table,'type');
         $this->structure['category']['options'] = $this->getDictList($this->table,'category');
-        $this->structure['cover']['options'] = $this->getDictList($this->table,'cover');
-        $this->structure['year']['options'] = $this->getDictList($this->table,'year');
+        $this->structure['waterproof']['options'] = $this->getDictList($this->table,'waterproof');
+        $this->structure['material']['options'] = $this->getDictList($this->table,'material');
+        $this->structure['display']['options'] = $this->getDictList($this->table,'display');
     }
 
 }
