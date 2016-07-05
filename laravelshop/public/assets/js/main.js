@@ -65,10 +65,16 @@
     $('.dict-del').on('click',function(e){
         var button = $(e.target),
             id = button.attr('data-id'),
-            item= button.parent('.dictlist__value-item');//элемент списка, для удаления
-          //console.log('del ',id);
+            item= button.parent('.dictlist__value-item'),//элемент списка, для удаления
+            token = $('#csrftoken').attr('data-token');
+       // console.log('del ',id,token);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': token
+            }
+        });
         $.ajax({
-            type:"GET",
+            type:"POST",
             dataType: "json",
             url:"/manager/dict/del",
             data: { 'id' : id }
@@ -91,11 +97,17 @@
             table=button.attr('data-table'),
             field=button.attr('data-field'),
             list=button.parents('.dictlist__panels-item-panel').find('.dictlist__panels-item-list'),//список, куда добавить элемент
-            value=button.siblings('.dictlist__input-dict').val().trim();//новое значение словаря
-     //   console.log('add ',table,field,value);
+            value=button.siblings('.dictlist__input-dict').val().trim(),//новое значение словаря
+            token = $('#csrftoken').attr('data-token');
+        //console.log('add ',table,field,value,token);
         if (value !== '') {
+            $.ajaxSetup({ //оказалось - просто вот так, как в руководстве
+                headers: {
+                    'X-CSRF-TOKEN': token
+                }
+            });
             $.ajax({
-                type: "GET",
+                type: "POST",
                 dataType: "json",
                 url: "/manager/dict/add",
                 data: {'table': table, 'field': field, 'value': value}

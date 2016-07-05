@@ -86,6 +86,7 @@
                         @endforeach
 
                     </ul>
+                    <div id="csrftoken" data-token="{{ csrf_token() }}"></div>
                 </div>
 
             </div>

@@ -12,6 +12,7 @@ use App\Models\Dict;
 use App\Models\Config;
 use Intervention\Image\Facades\Image as Image;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 
 
@@ -226,19 +227,28 @@ class Controller extends BaseController
     }
 
 
-    //получение конфиг из таблицы
+    //получение конфиг из таблицы или из файла
     public function getConfig($idConfig)
     {
-        $config = Config::where(['id_config' => $idConfig])-> get();
-        if (count($config)) {
-            return $config[0]->config;
-        } else { //если в базе нет, то берём данные по умолчанию из конфигов
+        $res='';
+        try {
+            if (Schema::hasTable('config')) {
+                $config = Config::where(['id_config' => $idConfig])-> get();
+                if (count($config)) {
+                    $res = $config[0]->config;
+                }
+            }
+            if ($res == '') {
+                $res = config('shop.' . $idConfig);
+            }
+            return $res;
+        } catch (Exception $e) {
             return config('shop.'.$idConfig);
         }
     }
 
     //запись конфига
-    protected function saveConfig($idConfig,$value)
+    public function saveConfig($idConfig,$value)
     {
         $config = Config::where(['id_config' => $idConfig])-> get();
         if (!count($config)) {
@@ -264,5 +274,14 @@ class Controller extends BaseController
         return ' and ' . $item . ' = ?';
         }
     }
+
+//    public function __construct(){
+//        $siteName = $this -> getConfig('siteName');
+//        echo 'sss'.$siteName;
+//        view()->composer('*',function($view) use ($siteName) {
+//            $view->with('siteName',$siteName);
+//        });
+//
+//    }
 
 }

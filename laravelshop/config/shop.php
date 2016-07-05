@@ -2,13 +2,13 @@
 
 return [
         //название сайта
-        'siteName' => 'Интернет-магазин "Всё за 1010 руб."',
+//        'siteName' => 'Интернет-магазин "Всё за 1010 руб."',
 
         // email  aдминистратора
-    'adminEmail' => 'oxygenn@list.ru',
+//    'adminEmail' => 'admin@loftschol.comccc',
 
     //количество выводимых товаров на странице по умолчанию
-    'itemsOnPage' => 15,
+//    'itemsOnPage' => 15,
 
     //папка с изображениями
     'images' => 'images',

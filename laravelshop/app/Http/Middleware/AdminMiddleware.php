@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Models\Config;
+use App\Http\Controllers\Controller;
 
 class AdminMiddleware
 {
@@ -17,9 +17,14 @@ class AdminMiddleware
     public function handle($request, Closure $next)
     {
         //dd($request->user()['attributes']);
-        if ($request->user()['attributes']['email'] != config('shop.adminEmail'))
+       //dd(config('shop.adminEmail'));
+        $controller = new Controller;
+        $adminEmail = $controller->getConfig('adminEmail');
+        $congroller = null;
+
+        if ($request->user()['attributes']['email'] != $adminEmail)
         {
-            return redirect('home');
+            return redirect()->guest('login');
         }
 
         return $next($request);
