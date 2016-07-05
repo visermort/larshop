@@ -143,19 +143,24 @@ class Controller extends BaseController
         if (!$value) {
             return '';
         }
-        $dict = Dict::where('table_name', $table)
-            ->where('field_name', $field)
-            ->where('value', $value)
-            ->get();
-        if (count($dict)){
-            return $dict[0]->id;
-        } else {
-            $dict = new Dict;
-            $dict ->table_name = $table;
-            $dict ->field_name = $field;
-            $dict ->value = $value;
-            $dict ->save();
-            return $dict->id;
+        try {
+            $dict = Dict::where('table_name', $table)
+                ->where('field_name', $field)
+                ->where('value', $value)
+                ->get();
+            if (count($dict)) {
+                return $dict[0]->id;
+            } else {
+                $dict = new Dict;
+                $dict->table_name = $table;
+                $dict->field_name = $field;
+                $dict->value = $value;
+                $dict->save();
+                return $dict->id;
+            }
+        } catch (Exception $e) {
+            Log::error('Ошибка записи в словарь '.$e->getMessage());
+            return '';
         }
     }
     //нахождение кода по значению
@@ -198,6 +203,28 @@ class Controller extends BaseController
             return [];
         }
     }
+    //вернуть массив словарей для таблицы
+    protected function getDictLists($table)
+    {
+        $res = [];
+        $dictList = Dict::where('table_name',$table)
+            ->groupBy('field_name')
+            ->get();
+        foreach ($dictList as $dict){
+           // $res[$dict->field_name]=[];
+            $dictVals = Dict::where([
+                'table_name' => $table,
+                'field_name' => $dict->field_name
+            ]) -> get();
+            foreach ($dictVals as $val) {
+                $res[$dict->field_name][$val->id] = $val->value;
+            }
+
+        }
+        //print_r($res);
+        return $res;
+    }
+
 
     //получение конфиг из таблицы
     public function getConfig($idConfig)

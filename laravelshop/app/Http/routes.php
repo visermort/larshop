@@ -28,6 +28,10 @@ Route::group(['middleware' => ['auth','admin']], function () {
     Route::get('/manager/','ControllerManager@index');
     Route::get('/manager/site','ControllerManager@index');
     Route::post('/manager/site/save','ControllerManager@save');
+
+    Route::get('/manager/dict/add','ControllerManager@dictAdd');
+    Route::get('/manager/dict/del','ControllerManager@dictDel');
+
     Route::get('/manager/model/{modelName}',function($modelName){
         $controllerName='App\Http\Controllers\ControllerManager';
         $controller = new $controllerName;

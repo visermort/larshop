@@ -30,23 +30,63 @@
                 <div class="row panel-heading">
                     Инструменты настройки модели "{{ $model_title }}"
                 </div>
-                <ul class="nav navbar-nav  ">
-                    <li role="presentation">
-                            <a class="btn   " href="/{{ $model }}">
-                                <i class="fa fa-list"></i> Каталог
-                            </a>
-                    </li>
-                    <li role="presentation">
-                            <a class="btn   " href="/manager/{{ $model }}/add">
-                                <i class="fa fa-plus"></i> Добавить запись
-                            </a>
-                    </li>
-                    <li role="presentation">
-                            <a class="btn   " href="/manager/{{ $model }}/sample/">
-                                <i class="fa fa-plus"></i><i class="fa fa-plus"></i> Наполнить тестовыми данными
-                            </a>
-                    </li>
-                </ul>
+                <div class="navbar">
+                    <ul class="nav navbar-nav  ">
+                        <li role="presentation">
+                                <a class="btn   " href="/{{ $model }}">
+                                    <i class="fa fa-list"></i> Каталог
+                                </a>
+                        </li>
+                        <li role="presentation">
+                                <a class="btn   " href="/manager/{{ $model }}/add">
+                                    <i class="fa fa-plus"></i> Добавить запись
+                                </a>
+                        </li>
+                        <li role="presentation">
+                                <a class="btn   " href="/manager/{{ $model }}/sample/">
+                                    <i class="fa fa-plus"></i><i class="fa fa-plus"></i> Наполнить тестовыми данными
+                                </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dictlist">
+                    {{--<pre><{{ print_r($dictList) }}/pre>--}}
+                    <div class="dictlist-header">
+                        Словари модели
+                    </div>
+                    <ul class="dictlist__tabs">
+                        @foreach($dictList as $key=>$dict)
+                            <li class="dictlist__tabs-item tab-{{$key}}">
+                            {{ $key }}
+                            </li>
+                        @endforeach
+                    </ul>
+                    <ul class="dictlist__panels">
+                        @foreach($dictList as $key=>$dicts)
+                            <li class="dictlist__panels-item panel-{{$key}}">
+                                <div class="dictlist__panels-item-panel">
+                                    <div class="dictlist__panel-head">
+                                        словарь для поля {{ $key }}
+                                    </div>
+                                    <ul class="dictlist__panels-item-list">
+                                    @foreach ($dicts as $id=>$dict)
+                                        <li class="dictlist__value-item">
+                                            {{$id}} : {{$dict}} <button class="dictlist__button bnt btn-default dict-del" data-id="{{$id}}">Удалить </button>
+                                        </li>
+
+                                    @endforeach
+                                    </ul>
+                                    <div class="dictlist__formgroup">
+                                        <input class="dictlist__input-dict" type="text" >
+                                        <button class="dictlist__button bnt btn-default dict-add" data-table="{{$model}}" data-field="{{$key}}" >Добавить </button>
+                                    </div>
+                                </div>
+                            </li>
+
+                        @endforeach
+
+                    </ul>
+                </div>
 
             </div>
         </div>

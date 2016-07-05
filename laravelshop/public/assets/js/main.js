@@ -58,7 +58,59 @@
             $(form).find('.modal__message_success').html('');
         });
 
-    }
+    };
 
+    //запросы на удадение и добавление словарей
+    //на удаление
+    $('.dict-del').on('click',function(e){
+        var button = $(e.target),
+            id = button.attr('data-id'),
+            item= button.parent('.dictlist__value-item');//элемент списка, для удаления
+          //console.log('del ',id);
+        $.ajax({
+            type:"GET",
+            dataType: "json",
+            url:"/manager/dict/del",
+            data: { 'id' : id }
+        }).done(function(e){
+                // console.log(e);
+            if (e.status) {
+                //если всё хорошо, то удаляем элемент
+                $(item).remove();
+            } else {
+                console.log(e);
+            }
+        }).fail(function(e){
+            console.log(e);
+        });
+    });
+
+    //на вставку
+    $('.dict-add').on('click',function(e){
+        var button = $(e.target),
+            table=button.attr('data-table'),
+            field=button.attr('data-field'),
+            list=button.parents('.dictlist__panels-item-panel').find('.dictlist__panels-item-list'),//список, куда добавить элемент
+            value=button.siblings('.dictlist__input-dict').val().trim();//новое значение словаря
+     //   console.log('add ',table,field,value);
+        if (value !== '') {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "/manager/dict/add",
+                data: {'table': table, 'field': field, 'value': value}
+            }).done(function (e) {
+              //  console.log(e);
+                if (e.status) {
+                    //если всё получилось, то добавляем элемент
+                    list.append('<li class="dictlist__value-item">'+ e.id+' : '+value+'</li>');
+                } else {
+                    console.log(e);
+                }
+            }).fail(function (e) {
+                console.log(e);
+            });
+        }
+    });
 
 })(jQuery);
