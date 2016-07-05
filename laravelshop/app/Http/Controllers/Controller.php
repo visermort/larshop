@@ -263,7 +263,7 @@ class Controller extends BaseController
     //является ли пользователь админом - пока данные из конфига, а не из базы
     protected function isAdmin()
     {
-        return (Auth::check() && Auth::user()['attributes']['email'] == config('shop.adminEmail'));
+        return (Auth::check() && Auth::user()['attributes']['email'] == $this->getConfig('adminEmail'));
     }
     //при формированиии запроса для фильтра, добавляем sql и 2 массива
     protected function addFilter($item,$requestItem,&$arr,&$filter)
@@ -275,13 +275,5 @@ class Controller extends BaseController
         }
     }
 
-//    public function __construct(){
-//        $siteName = $this -> getConfig('siteName');
-//        echo 'sss'.$siteName;
-//        view()->composer('*',function($view) use ($siteName) {
-//            $view->with('siteName',$siteName);
-//        });
-//
-//    }
 
 }

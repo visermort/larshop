@@ -60,8 +60,8 @@ class HomeController extends Controller
             );
             try {
                 Mail::send('common.mail',$data,function($message){
-                    $message->to(config('shop.adminEmail'));
-                    $message->subject('Заказ товара на сайте '.config('shop.siteName'));
+                    $message->to($this->getConfig('adminEmail'));
+                    $message->subject('Заказ товара на сайте '.$this->getConfig('siteName'));
                 });
                 $status = true;
                 $message = '<p>Ваш заказ принят.</p><p>Наш менеджер свяжется с Вами в ближайшее время.</p>'.
