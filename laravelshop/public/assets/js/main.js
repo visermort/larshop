@@ -65,9 +65,9 @@
     $('.dict-del').on('click',function(e){
         var button = $(e.target),
             id = button.attr('data-id'),
-            item= button.parent('.dictlist__value-item'),//элемент списка, для удаления
+            item= button.parents('.dictlist__value-item'),//элемент списка, для удаления
             token = $('#csrftoken').attr('data-token');
-       // console.log('del ',id,token);
+      //  console.log('del ',id,token);
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': token
@@ -97,7 +97,7 @@
             table=button.attr('data-table'),
             field=button.attr('data-field'),
             list=button.parents('.dictlist__panels-item-panel').find('.dictlist__panels-item-list'),//список, куда добавить элемент
-            value=button.siblings('.dictlist__input-dict').val().trim(),//новое значение словаря
+            value=button.parents('.dictlist__formgroup').find('.dictlist__input-dict').val().trim(),//новое значение словаря
             token = $('#csrftoken').attr('data-token');
         //console.log('add ',table,field,value,token);
         if (value !== '') {
@@ -124,5 +124,19 @@
             });
         }
     });
+
+    //переключение табов
+    $('.dictlist__tabs-item').on('click',function(e){
+        var tab=$(e.target),
+            key=tab.attr('data-tab'),
+            panel= tab.parents('.dictlist').find('.panel-'+key),
+            panels = tab.parents('.dictlist').find('.dictlist__panels-item-panel'),
+            tabs = tab.parents('.dictlist__tabs').find('.dictlist__tabs-item');
+        panels.removeClass('active');
+        panel.addClass('active');
+        tabs.removeClass('active');
+        tab.addClass('active');
+    });
+
 
 })(jQuery);

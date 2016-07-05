@@ -49,36 +49,45 @@
                         </li>
                     </ul>
                 </div>
-                <div class="dictlist">
+                <div class="dictlist clearfix">
                     {{--<pre><{{ print_r($dictList) }}/pre>--}}
-                    <div class="dictlist-header">
+                    <div class="dictlist-header ">
                         Словари модели
                     </div>
-                    <ul class="dictlist__tabs">
+                    <ul class="dictlist__tabs col-sm-4">
                         @foreach($dictList as $key=>$dict)
-                            <li class="dictlist__tabs-item tab-{{$key}}">
-                            {{ $key }}
+                             <li class="dictlist__tabs-item tab-{{$key}}" data-tab="{{$key}}"  >
+                                  {{ $key }}
                             </li>
                         @endforeach
                     </ul>
-                    <ul class="dictlist__panels">
+                    <ul class="dictlist__panels col-sm-8">
                         @foreach($dictList as $key=>$dicts)
-                            <li class="dictlist__panels-item panel-{{$key}}">
-                                <div class="dictlist__panels-item-panel">
+                            <li class="dictlist__panels-item">
+                                <div class="dictlist__panels-item-panel panel-{{$key}}">
                                     <div class="dictlist__panel-head">
-                                        словарь для поля {{ $key }}
+                                        Cловарь для поля {{ $key }}
                                     </div>
                                     <ul class="dictlist__panels-item-list">
                                     @foreach ($dicts as $id=>$dict)
-                                        <li class="dictlist__value-item">
-                                            {{$id}} : {{$dict}} <button class="dictlist__button bnt btn-default dict-del" data-id="{{$id}}">Удалить </button>
+                                        <li class="dictlist__value-item clearfix">
+                                           <div class="col-sm-8">
+                                               {{$id}} : {{$dict}}
+                                           </div>
+                                           <div
+                                                   class="col-sm-4">  <button class="dictlist__button bnt btn-default dict-del" data-id="{{$id}}">Удалить </button>
+                                           </div>
                                         </li>
 
                                     @endforeach
                                     </ul>
-                                    <div class="dictlist__formgroup">
-                                        <input class="dictlist__input-dict" type="text" >
-                                        <button class="dictlist__button bnt btn-default dict-add" data-table="{{$model}}" data-field="{{$key}}" >Добавить </button>
+                                    <div class="dictlist__formgroup clearfix">
+                                        <div class="col-sm-8">
+                                             <input class="dictlist__input-dict" type="text" >
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <button class="dictlist__button bnt btn-default dict-add" data-table="{{$model}}" data-field="{{$key}}" >Добавить </button>
+                                        </div>
                                     </div>
                                 </div>
                             </li>
