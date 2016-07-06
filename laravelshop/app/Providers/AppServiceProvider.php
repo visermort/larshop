@@ -11,6 +11,7 @@ class AppServiceProvider extends ServiceProvider
         //пробуем передать имя сайта во все вьюхи
     private function putVarsToView()
     {
+
         $controller = new Controller;
         $siteName = $controller -> getConfig('siteName');
         $controller = null;
@@ -27,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-       // $this->putVarsToView();
+        $this->putVarsToView();
     }
 
     /**

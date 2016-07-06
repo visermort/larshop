@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder
         // $this->call(UsersTableSeeder::class);
         $controller = new Controller;
         $controller -> saveConfig('adminEmail','admin@loftschol.com');
+        $controller -> saveConfig('siteName','Интренет-магазин "Всё за 1010 руб."');
+        $controller -> saveConfig('itemsOnPage','12');
+
         $controller = null;
 
     }

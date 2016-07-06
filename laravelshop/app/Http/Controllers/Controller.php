@@ -22,7 +22,7 @@ class Controller extends BaseController
 
     //сруктура для передачи в представления
     //поля базовой модели - для каждой категории товаров
-    protected $structure = array(
+    public $structure = array(
         'id' => ['title' => 'id','type' => 'text'],
         'name' => ['title' => 'Наименование','type' => 'text'],
         'manufacturer' => ['title' => 'Производитель','type' => 'select'],
@@ -44,9 +44,16 @@ class Controller extends BaseController
             switch ($field['type'])  {
                 case 'select': $res[$key] = $this->getDict($arr[$key]);
                             break;
-                case 'image': $res[$key] = config('shop.images').'/'.$this -> getFullimage($arr[$key]);
-                            $res[$key.'_mid'] = config('shop.images').'/'.$this -> getMidImage($arr[$key]);
-                            $res[$key.'_thumb'] = config('shop.images').'/'.$this -> getThumbnail($arr[$key]);
+                case 'image':
+                            $res[$key] = (file_exists(config('shop.images').'/'.$this -> getFullimage($arr[$key])) ?
+                                 config('shop.images').'/'.$this -> getFullimage($arr[$key]) :
+                                 config('shop.images').'/'.config('shop.noImage'));
+                            $res[$key.'_mid'] = (file_exists( config('shop.images').'/'.$this -> getMidImage($arr[$key])) ?
+                                 config('shop.images').'/'.$this -> getMidImage($arr[$key]) :
+                                 config('shop.images').'/'.config('shop.noImageMid'));
+                            $res[$key.'_thumb'] = (file_exists(config('shop.images').'/'.$this -> getThumbnail($arr[$key])) ?
+                                config('shop.images').'/'.$this -> getThumbnail($arr[$key]) :
+                                config('shop.images').'/'.config('shop.noImageThumb'));
                             break;
                 default: $res[$key] = $arr[$key];
             }

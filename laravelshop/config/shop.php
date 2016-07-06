@@ -1,21 +1,13 @@
 <?php
 
 return [
-        //название сайта
-//        'siteName' => 'Интернет-магазин "Всё за 1010 руб."',
-
-        // email  aдминистратора
-//    'adminEmail' => 'admin@loftschol.comccc',
-
-    //количество выводимых товаров на странице по умолчанию
-//    'itemsOnPage' => 15,
 
     //папка с изображениями
     'images' => 'images',
 
-    'shopname' => 'Интернет-магазин "Всё за 1010 руб."',
-
-    'defaulttitle' => 'Магазин "Всё за 1010 руб.',
+    'noImage' => 'tmp/noimage.png',
+    'noImageMid' => 'tmp/noimage_mid.png',
+    'noImageThumb' => 'tmp/noimage_thumb.png',
 
     'models' => [
         'drinks' => [

@@ -27,14 +27,18 @@ class ControllerManager extends Controller
     }
     public function model($model)
     {
-
-
+        //обращаемся к соответствующему контроллеру, чтобы получить струкутуру - нужна для отображения словарей
+        $controllerName = 'App\Http\Controllers\Controller'.ucfirst($model);
+        $controller = new $controllerName;
+        $structure = $controller->structure;
+        $controller = null;
         $data= array(
             'model' => $model,
             'model_title' => config('shop.models')[$model]['title'],
             'title' => 'Магазин - Админ. панель ',
-            'pageTitle' => 'Магазин - административаная панель. Товар. Категория '.config('shop.models')[$model]['title'],
-            'dictList' => $this->getDictLists($model) //набор словарей для данной модели
+            'pageTitle' => 'Магазин - административная панель. Товар. Категория '.config('shop.models')[$model]['title'],
+           // 'dictList' => $this->getDictLists($model), //набор словарей для данной модели
+            'structure' => $structure
         );
         return view('pages.manager_model',$data);
     }
@@ -88,7 +92,6 @@ class ControllerManager extends Controller
     //    добавление элемента словаря
     public function dictAdd(Request $request)
     {
-  //      $ins=[];
         $validator = Validator::make($request->all(), [
             'table' => 'required',
             'field' => 'required',
@@ -100,9 +103,6 @@ class ControllerManager extends Controller
             $id='';
         } else {
             try {
-//                $ins['table'] = $request->table;
-//                $ins['field'] = $request->field;
-//                $ins['value'] = $request->value;
                 $id = $this -> writeDict($request->table, $request->field, $request->value);
                 if ($id !='' && is_int($id) ) {
                     $message = 'Вставка выполнена';
@@ -122,7 +122,6 @@ class ControllerManager extends Controller
             'status' => $status,
             'message' => $message,
             'id' => $id,
-//            'ins' => $ins
         ]);
 
     }

@@ -154,7 +154,8 @@ html, body {
     border: 1px solid #c5c5c5;
     margin-bottom: 5px;
     cursor: pointer;
-    text-align: center;
+    /*text-align: center;*/
+    padding-left: 20px
 }
 .dictlist__tabs-item:hover {
     border: 1px solid #808080;

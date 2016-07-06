@@ -6,20 +6,20 @@
     <div class="container">
         <div class="row">
             <div class="page-header clearfix">
-                <div class="col-sm-6">
+                <div class="col-sm-12">
                     <h1 class="page-header__h1">{{ $pageTitle }}</h1>
                 </div>
-                <div class="col-sm-6">
-                    <ul class="nav nav-pills navbar-right page-header__nav">
-                        <li role="presentation">
-                            <a class="btn   page-header__button" href="/manager"> <i class="fa fa-wrench"></i> Панель администратора</a>
-                        </li>
+                {{--<div class="col-sm-6">--}}
+                    {{--<ul class="nav nav-pills navbar-right page-header__nav">--}}
+                        {{--<li role="presentation">--}}
+                            {{--<a class="btn   page-header__button" href="/manager"> <i class="fa fa-wrench"></i> Панель администратора</a>--}}
+                        {{--</li>--}}
                         {{--<li role="presentation">--}}
                             {{--<button type="submit" class="btn btn-primary page-header__button" form="form-edit"><i class="fa fa-cloud"></i> Сохранить</button>--}}
                         {{--</li>--}}
 
-                    </ul>
-                </div>
+                    {{--</ul>--}}
+                {{--</div>--}}
             </div>
         </div>
 
@@ -55,24 +55,27 @@
                         Словари модели
                     </div>
                     <ul class="dictlist__tabs col-sm-4">
-                        @foreach($dictList as $key=>$dict)
+                        @foreach ($structure  as $key=>$dict)
+                            @if ($dict['type']=='select')
                              <li class="dictlist__tabs-item tab-{{$key}}" data-tab="{{$key}}"  >
-                                  {{ $key }}
+                                  {{ $dict['title'] }}
                             </li>
+                            @endif
                         @endforeach
                     </ul>
                     <ul class="dictlist__panels col-sm-8">
-                        @foreach($dictList as $key=>$dicts)
+                        @foreach($structure as $key=>$dicts)
+                            @if (($dicts['type']=='select') && isset($dicts['options']))
                             <li class="dictlist__panels-item">
                                 <div class="dictlist__panels-item-panel panel-{{$key}}">
                                     <div class="dictlist__panel-head">
-                                        Cловарь для поля {{ $key }}
+                                        Cловарь для поля {{ $dicts['title'] }}
                                     </div>
                                     <ul class="dictlist__panels-item-list">
-                                    @foreach ($dicts as $id=>$dict)
+                                    @foreach ($dicts['options'] as $id => $option)
                                         <li class="dictlist__value-item clearfix">
                                            <div class="col-sm-8">
-                                               {{$id}} : {{$dict}}
+                                               {{$id}} : {{$option}}
                                            </div>
                                            <div
                                                    class="col-sm-4">  <button class="dictlist__button bnt btn-default dict-del" data-id="{{$id}}">Удалить </button>
@@ -91,7 +94,7 @@
                                     </div>
                                 </div>
                             </li>
-
+                            @endif
                         @endforeach
 
                     </ul>

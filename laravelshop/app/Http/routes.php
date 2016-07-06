@@ -41,8 +41,11 @@ Route::group(['middleware' => ['auth','admin']], function () {
     Route::get('/manager/{modelName}/{action}',function($modelName,$action){
         if ($modelName !='site' && $modelName !='model') {
             $controllerName = 'App\Http\Controllers\Controller' . ucFirst($modelName);
-            $controller = new $controllerName;
             $action = strtolower($action);
+            if (!class_exists($controllerName) || !is_callable([$controllerName,$action])) {
+                abort(404);
+            }
+            $controller = new $controllerName;
             return $controller->$action();
         }
     });
@@ -76,6 +79,9 @@ Route::group(['middleware' => ['auth','admin']], function () {
 Route::get('/{model}', function($model) {
     if (!in_array($model, ['manager'])){
         $className = 'App\Http\Controllers\Controller' . ucfirst($model);
+        if (!class_exists($className)){
+            abort(404);
+        }
         $controller = new $className;
         return $controller->index();
     }
@@ -83,6 +89,9 @@ Route::get('/{model}', function($model) {
 
 Route::get('/{model}/filter', function($model,Request $request) {
         $className = 'App\Http\Controllers\Controller' . ucfirst($model);
+        if (!class_exists($className)){
+            abort(404);
+        }
         $controller = new $className;
         return $controller->filter($request);
 });
@@ -91,47 +100,17 @@ Route::get('/{model}/{id}', function($model,$id) {
     $id = (int) $id;
     if ($id > 0) {
         $className = 'App\Http\Controllers\Controller' . ucfirst($model);
+        if (!class_exists($className)){
+            abort(404);
+        }
         $controller = new $className;
         return $controller->single($id);
+    } else {
+        abort(404);
     }
 });
 
 
-
-//Route::group(['middleware' => ['auth','admin']], function () {
-
-
-//
-//    Route::get('/{model}/{action}/', function($model,$action = 'index') {
-//        $model = ucfirst($model);
-//        $action =strtolower($action);
-//        if (in_array($action,['sample','add'])) {
-//            $className = 'App\Http\Controllers\Controller' . $model;
-//            $controller = new $className;
-//            return $controller->$action();
-//        }
-//    });
-//
-//    Route::get('/{model}/{action}/{id}', function($model,$action = 'index',$id=0) {
-//        $model = ucfirst($model);
-//        $action =strtolower($action);
-//        if (in_array($action,['edit','delete'])) {
-//            $className = 'App\Http\Controllers\Controller' . $model;
-//            $controller = new $className;
-//            return $controller->$action($id);
-//        }
-//    });
-//    Route::post('/{model}/{action}', function($model,$action = 'index',Request $request) {
-//        $model = ucfirst($model);
-//        $action =strtolower($action);
-//        if (in_array($action,['save'])) {
-//            $className = 'App\Http\Controllers\Controller' . $model;
-//            $controller = new $className;
-//            return $controller->$action($request);
-//        }
-//    });
-
-//});
 
 
 

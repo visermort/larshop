@@ -47,8 +47,7 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{--{{ config('shop.shopname') }}--}}
-                    {{ $siteName or "" }}
+                    {{ $siteName or "Название сайта" }}
                 </a>
             </div>
 
