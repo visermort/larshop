@@ -71,7 +71,7 @@
                     <div class="formgroup filter__formgoup">
                         <a class="btn btn-primary" href="/{{ $table }}" > Сбросить </a>
                     </div>
-                    {{ csrf_field() }}
+                    {{--{{ csrf_field() }}--}}
                 </form>
             </div>
 
@@ -115,7 +115,12 @@
                </div>
                @endforeach
                <div class="product__pagination">
-                   {!! $modelData->render() !!}
+
+                   @if (isset($filterData))
+                       {!! $modelData->appends($filterData)->render() !!}
+                   @else
+                       {!! $modelData->render() !!}
+                   @endif
                </div>
             </div>
         </div>
