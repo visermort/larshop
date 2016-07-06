@@ -8,7 +8,7 @@
 2. cd larshop
 3. cd laravelshop
 4. composer install
-5. Скопировать файл .env.examlpe в env.
+5. Скопировать файл .env.examlpe в .env.
 6. Создать базу данных. Насторить параметры подключения и почтовый сервис в файле .env
 5. php artisan migrate
 6. php artisan db:seed
